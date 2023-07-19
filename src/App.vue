@@ -1,7 +1,6 @@
 <script>
 import modalWindow from './components/modalWindow.vue'
 import dotCircle from './components/dotCircle.vue'
-import taskPage from './components/taskPage.vue'
 import database from './db.json'
 
 export default {
