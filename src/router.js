@@ -11,8 +11,8 @@ export default createRouter({
 		},
 		{
 			path: '/task-info/:id',
-			component: taskPageComponent
-			
+			component: taskPageComponent,
+			props: true
 		}
 	]
 })

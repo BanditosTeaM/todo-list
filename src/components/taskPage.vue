@@ -2,37 +2,51 @@
 import database from '../db.json'
 
 export default {
+	props: {
+		id: {
+			type: String,
+			required: true
+		}
+	},
+
 	data() {
 		return {
 			isModalWindowOpen: false,
 			colors: [],
 			titles: [],
-			tasks: [],
-			taskId: null
+			tasks: []
 		}
 	},
+
+	computed: {
+		numberedTaskId() {
+			return Number(this.id)
+		},
+
+		taskData() {
+			const task = this.tasks.find(task => task.id === this.numberedTaskId)
+
+			return task ? task.task : ''
+		}
+	},
+
 	mounted() {
 		this.fetchData()
 	},
-	created() {
-		this.taskId = this.$route.params.id
-	},
+
 	methods: {
 		fetchData() {
-			this.database = database
+			// this.database = database
 			this.colors = database.titleColor
 			this.titles = database.titleTask
 			this.tasks = database.infoTask
 		},
+
 		getColorById(id) {
 			const colorObj = this.colors.find(color => color.id === id)
 			return colorObj ? colorObj.color : ''
 		},
 
-		getTaskById(id) {
-			const tasksObj = this.tasks.find(task => task.id === id)
-			return tasksObj ? tasksObj.task : ''
-		},
 		fetchTash(id) {
 			this.task = this.tasks.find(task => task.id == id)
 		}
@@ -45,7 +59,7 @@ export default {
 		<div>
 			<!-- <h1 :style="{ color: getColorById(title.color_id) }"></h1> -->
 			<hr />
-			<h2>{{ getTaskById(taskId) }}</h2>
+			<h2>{{ taskData }}</h2>
 		</div>
 	</div>
 </template>
