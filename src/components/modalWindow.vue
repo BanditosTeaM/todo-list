@@ -55,7 +55,7 @@ export default {
 				:color="circle.color"
 			/>
 		</div>
-		<div>
+		<div class="buttonAddFolder">
 			<button>Добавить</button>
 		</div>
 	</div>
@@ -65,26 +65,42 @@ export default {
 .modalWindow {
 	background-color: red;
 	height: 150px;
-	width: 280px;
+	width: 350px;
 	border-radius: 10px;
 	margin-top: 25px;
 	margin-left: 30px;
 }
 .InputFolder {
 	width: 200px;
-	height: 32px;
+	height: 40px;
 	border-radius: 4px;
 	border: 1px;
 	box-sizing: border-box;
-	margin-left: 35px;
+	margin-top: 15px;
+	margin-left: 75px;
 	outline: none;
 }
 .buttonClose {
+	display: block;
 	width: 30px;
 	height: 32;
 	outline: none;
 	border: 0;
 	background: transparent;
 	float: right;
+}
+.buttonAddFolder {
+	text-align: center;
+}
+.buttonAddFolder button {
+	background-color: #4dd599;
+	width: 200px;
+	height: 37px;
+	border-radius: 4px;
+	border: 0;
+	cursor: pointer;
+}
+.buttonAddFolder button:active {
+	background-color: #256e4e;
 }
 </style>
