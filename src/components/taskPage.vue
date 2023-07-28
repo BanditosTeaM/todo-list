@@ -1,7 +1,11 @@
 <script>
 import database from '../db.json'
+import modalWindowTask from './modalWindowTask.vue'
 
 export default {
+	components: {
+		modalWindowTask
+	},
 	props: {
 		id: {
 			type: String,
@@ -11,7 +15,7 @@ export default {
 
 	data() {
 		return {
-			isModalWindowOpen: false,
+			isModalWindowTaskOpen: false,
 			colors: [],
 			titles: [],
 			tasks: []
@@ -75,14 +79,57 @@ export default {
 					/>
 					<span class="checkBox"></span>
 					{{ taskData }}
+					<button class="deleteTask">
+						<img
+							src="../assets/hoverClose.svg"
+							alt="X"
+						/>
+					</button>
 				</label>
 			</h2>
-			<button>+ Добавить задачу</button>
+			<a
+				class="addTask"
+				@click="isModalWindowTaskOpen = true"
+			>
+				+ Добавить задачу
+			</a>
+			<modalWindowTask
+				v-if="isModalWindowTaskOpen"
+				@close="isModalWindowTaskOpen = false"
+			/>
 		</div>
 	</div>
 </template>
 
 <style scoped>
+.addTask {
+	color: #b4b4b4;
+	font-size: 20px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: normal;
+	letter-spacing: 0.15px;
+	cursor: pointer;
+}
+
+.deleteTask {
+	opacity: 0;
+	background-color: white;
+	border: 0;
+	cursor: pointer;
+	float: right;
+	padding-top: 13px;
+}
+.deleteTask img {
+	height: 15px;
+	width: 15px;
+}
+.check:hover .deleteTask {
+	opacity: 1;
+}
+.check {
+	display: block;
+}
 .checkInput {
 	position: absolute;
 	-webkit-appearance: none;
@@ -98,8 +145,11 @@ export default {
 }
 .checkInput:checked + .checkBox {
 	background-color: #4dd599;
-	box-shadow: 0 0 0 2px #4dd599;
+	box-shadow: 0 0 0 1px #4dd599;
 	background-image: url(../assets/checkedTask.svg);
+}
+.checkInput:focus + .checkBox {
+	box-shadow: 0 0 0 2px black;
 }
 h1 {
 	font-family:

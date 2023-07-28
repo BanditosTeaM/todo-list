@@ -1,11 +1,7 @@
 <script>
 import database from '../db.json'
-import dotCircle from './dotCircle.vue'
 
 export default {
-	components: {
-		dotCircle
-	},
 	emits: ['close'],
 	data() {
 		return {
@@ -48,13 +44,22 @@ export default {
 			/>
 		</div>
 
-		<div>
-			<dotCircle
-				v-for="circle in titleColor"
-				:key="circle.id"
-				:color="circle.color"
+		<label
+			v-for="circle in titleColor"
+			:key="circle.id"
+			class="circle-div"
+		>
+			<input
+				class="circle-input"
+				type="radio"
+				name="circle-radio"
 			/>
-		</div>
+			<span
+				class="circle-span"
+				:style="{ backgroundColor: circle.color }"
+			></span>
+		</label>
+
 		<div class="buttonAddFolder">
 			<button>Добавить</button>
 		</div>
@@ -62,8 +67,29 @@ export default {
 </template>
 
 <style scoped>
+.circle-div {
+	display: inline-block;
+	margin-top: 10px;
+	margin-right: 13px;
+}
+.circle-input {
+	position: absolute;
+	-webkit-appearance: none;
+	appearance: none;
+}
+.circle-span {
+	display: inline-block;
+	height: 30px;
+	width: 30px;
+	border-radius: 20px;
+	cursor: pointer;
+}
+.circle-input:checked + .circle-span {
+	box-shadow: 0 0 0 2px #525252;
+}
+
 .modalWindow {
-	background-color: red;
+	background-color: #ffffff;
 	height: 150px;
 	width: 350px;
 	border-radius: 10px;
@@ -74,10 +100,10 @@ export default {
 	width: 200px;
 	height: 40px;
 	border-radius: 4px;
-	border: 1px;
+	border: 1px solid black;
 	box-sizing: border-box;
 	margin-top: 15px;
-	margin-left: 75px;
+	margin-left: 65px;
 	outline: none;
 }
 .buttonClose {
@@ -88,6 +114,7 @@ export default {
 	border: 0;
 	background: transparent;
 	float: right;
+	cursor: pointer;
 }
 .buttonAddFolder {
 	text-align: center;

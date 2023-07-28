@@ -74,11 +74,11 @@ export default {
 }
 .checkInput:checked + .checkBox {
 	background-color: #4dd599;
-	box-shadow: 0 0 0 2px #4dd599;
+	box-shadow: 0 0 0 1px #4dd599;
 	background-image: url(../assets/checkedTask.svg);
 }
 .checkInput:focus + .checkBox {
-	box-shadow: 0 0 0 3px black;
+	box-shadow: 0 0 0 1px black;
 }
 h1 {
 	font-family:

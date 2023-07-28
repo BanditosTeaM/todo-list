@@ -1,5 +1,5 @@
 <script>
-import modalWindow from './components/modalWindow.vue'
+import modalWindow from './components/modalWindowFolder.vue'
 import dotCircle from './components/dotCircle.vue'
 import database from './db.json'
 
@@ -13,7 +13,8 @@ export default {
 			isModalWindowOpen: false,
 			colors: [],
 			titles: [],
-			tasks: []
+			tasks: [],
+			activeTask: null
 		}
 	},
 	mounted() {
@@ -28,6 +29,13 @@ export default {
 		getColorById(id) {
 			const colorObj = this.colors.find(color => color.id === id)
 			return colorObj ? colorObj.color : ''
+		},
+		changeBackground(id) {
+			if (this.activeTask === id) {
+				this.activeItem = null
+			} else {
+				this.activeTask = id
+			}
 		}
 	}
 }
@@ -52,13 +60,19 @@ export default {
 						v-for="title in titles"
 						:key="title.id"
 						class="titleTask"
+						:class="{ active: activeTask === title.id }"
+						@click="changeBackground(title.id)"
 					>
-						<label>
-							<router-link :to="'/task-info/' + title.id">
-								<dotCircle :color="getColorById(title.colorId)" />
-								{{ title.title }}
-							</router-link>
-						</label>
+						<router-link :to="'/task-info/' + title.id">
+							<dotCircle :color="getColorById(title.colorId)" />
+							{{ title.title }}
+						</router-link>
+						<button class="deleteTask">
+							<img
+								src="./assets/hoverClose.svg"
+								alt="X"
+							/>
+						</button>
 					</li>
 				</ul>
 			</nav>
@@ -78,8 +92,27 @@ export default {
 </template>
 
 <style scoped>
+.deleteTask {
+	opacity: 0;
+	background-color: #f4f6f8;
+	border: 0;
+	cursor: pointer;
+	float: right;
+	padding-top: 13px;
+}
 img {
 	height: 25px;
+}
+.deleteTask img {
+	height: 15px;
+	width: 15px;
+}
+.titleTask:hover .deleteTask {
+	opacity: 1;
+}
+.titleTask.active .deleteTask {
+	background: #fff;
+	opacity: 1;
 }
 .menuNav {
 	margin-left: 10px;
@@ -99,6 +132,12 @@ img {
 .titleTask {
 	margin-top: 10px;
 	margin-left: 15px;
+}
+
+.titleTask.active {
+	border-radius: 4px;
+	background: #fff;
+	box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.05);
 }
 
 .menu {
