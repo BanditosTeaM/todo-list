@@ -69,8 +69,8 @@ export default {
 <style scoped>
 .circle-div {
 	display: inline-block;
-	margin-top: 10px;
-	margin-right: 13px;
+	margin-top: 13px;
+	margin-left: 8.6px;
 }
 .circle-input {
 	position: absolute;
@@ -79,8 +79,8 @@ export default {
 }
 .circle-span {
 	display: inline-block;
-	height: 30px;
-	width: 30px;
+	height: 20px;
+	width: 20px;
 	border-radius: 20px;
 	cursor: pointer;
 }
@@ -91,19 +91,20 @@ export default {
 .modalWindow {
 	background-color: #ffffff;
 	height: 150px;
-	width: 350px;
+	width: 235px;
 	border-radius: 10px;
 	margin-top: 25px;
 	margin-left: 30px;
 }
 .InputFolder {
 	width: 200px;
-	height: 40px;
+	height: 32px;
+	flex-shrink: 0;
 	border-radius: 4px;
-	border: 1px solid black;
+	border: 1px solid #efefef;
 	box-sizing: border-box;
-	margin-top: 15px;
-	margin-left: 65px;
+	margin-left: 15px;
+	padding-left: 15px;
 	outline: none;
 }
 .buttonClose {
@@ -117,6 +118,7 @@ export default {
 	cursor: pointer;
 }
 .buttonAddFolder {
+	border-top: 13px;
 	text-align: center;
 }
 .buttonAddFolder button {
@@ -126,6 +128,7 @@ export default {
 	border-radius: 4px;
 	border: 0;
 	cursor: pointer;
+	margin-top: 10px;
 }
 .buttonAddFolder button:active {
 	background-color: #256e4e;

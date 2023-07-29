@@ -59,6 +59,14 @@ export default {
 </template>
 
 <style scoped>
+@font-face {
+	font-family: 'Lato';
+	src: url('./assets/fonts/Lato-Regular.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Montserrat';
+	src: url('../assets/fonts/Montserrat-Regular.ttf') format('truetype');
+}
 .checkInput {
 	position: absolute;
 	-webkit-appearance: none;
@@ -71,6 +79,7 @@ export default {
 	box-shadow: 0 0 0 3px #e8e8e8;
 	border-radius: 10px;
 	background-color: white;
+	margin-right: 15px;
 }
 .checkInput:checked + .checkBox {
 	background-color: #4dd599;
@@ -81,29 +90,28 @@ export default {
 	box-shadow: 0 0 0 1px black;
 }
 h1 {
-	font-family:
-		system-ui,
-		-apple-system,
-		BlinkMacSystemFont,
-		'Segoe UI',
-		Roboto,
-		Oxygen,
-		Ubuntu,
-		Cantarell,
-		'Open Sans',
-		'Helvetica Neue',
-		sans-serif;
-	font-size: 40px;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 32px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
 }
 h2 {
-	font-size: 27px;
-	font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
-		'Lucida Sans', Arial, sans-serif;
+	color: #000;
+	font-family: 'Lato', sans-serif;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: normal;
+	margin-top: 40px;
 }
 hr {
 	width: 420px;
 	height: 1px;
+	flex-shrink: 0;
 	border: 0;
 	background-color: #f2f2f2;
+	margin-top: 20px;
+	margin-bottom: 35px;
 }
 </style>

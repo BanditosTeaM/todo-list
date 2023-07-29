@@ -2,17 +2,22 @@
 import modalWindow from './components/modalWindowFolder.vue'
 import dotCircle from './components/dotCircle.vue'
 import database from './db.json'
+import { useDataStore } from './store'
 
 export default {
 	components: {
 		modalWindow,
 		dotCircle
 	},
+	setup() {
+		const dataStore = useDataStore()
+		dataStore.fetchData()
+		console.log(dataStore.title)
+		return { dataStore }
+	},
 	data() {
 		return {
 			isModalWindowOpen: false,
-			colors: [],
-			titles: [],
 			tasks: [],
 			activeTask: null
 		}
@@ -42,6 +47,7 @@ export default {
 </script>
 
 <template>
+	{{ console.log(dataStore.title) }}
 	<div class="container">
 		<div class="menu">
 			<div class="allTask">
@@ -65,7 +71,6 @@ export default {
 					>
 						<router-link :to="'/task-info/' + title.id">
 							<dotCircle :color="getColorById(title.colorId)" />
-							{{ title.title }}
 						</router-link>
 						<button class="deleteTask">
 							<img
@@ -92,6 +97,10 @@ export default {
 </template>
 
 <style scoped>
+@font-face {
+	font-family: 'Lato';
+	src: url('./assets/fonts/Lato-Regular.ttf') format('truetype');
+}
 .deleteTask {
 	opacity: 0;
 	background-color: #f4f6f8;
@@ -100,12 +109,15 @@ export default {
 	float: right;
 	padding-top: 13px;
 }
-img {
-	height: 25px;
+.allTask img {
+	width: 18px;
+	height: 18px;
+	flex-shrink: 0;
 }
 .deleteTask img {
-	height: 15px;
-	width: 15px;
+	width: 10px;
+	height: 10px;
+	flex-shrink: 0;
 }
 .titleTask:hover .deleteTask {
 	opacity: 1;
@@ -114,52 +126,61 @@ img {
 	background: #fff;
 	opacity: 1;
 }
+.titleTask {
+	width: 200px;
+	height: 35px;
+	flex-shrink: 0;
+}
+.titleTask.active {
+	width: 200px;
+	height: 37px;
+	flex-shrink: 0;
+	border-radius: 4px;
+	background: #fff;
+	box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.05);
+}
 .menuNav {
 	margin-left: 10px;
 }
 .openWindow {
+	color: #767676;
+	font-family: 'Lato', sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 600;
+	line-height: normal;
+	letter-spacing: 0.15px;
 	cursor: pointer;
 }
+.openWindow:hover {
+	color: #767676;
+}
 .infoTask {
-	margin-left: 50px;
+	margin-left: 56px;
 }
 .container {
 	display: flex;
 	flex-direction: row;
 }
 .allTask,
-.openWindow,
-.titleTask {
+.openWindow {
 	margin-top: 10px;
-	margin-left: 15px;
+	margin-left: 25px;
 }
-
-.titleTask.active {
-	border-radius: 4px;
-	background: #fff;
-	box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.05);
-}
-
 .menu {
-	font-size: 27px;
-	font-weight: 600;
-	font-family:
-		system-ui,
-		-apple-system,
-		BlinkMacSystemFont,
-		'Segoe UI',
-		Roboto,
-		Oxygen,
-		Ubuntu,
-		Cantarell,
-		'Open Sans',
-		'Helvetica Neue',
-		sans-serif;
+	font-family: Roboto;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	letter-spacing: 0.15px;
 	background-color: #f4f6f8;
-	width: 400px;
+	width: 275px;
 	height: 100vh;
 }
-
+ul {
+	padding-left: 10px;
+}
 li {
 	list-style-type: none;
 }
