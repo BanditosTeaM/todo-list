@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { getDatabaseData } from './api/getDatabaseOld'
 
 export const useDataStore = defineStore('data', {
 	state: () => ({
@@ -8,11 +9,10 @@ export const useDataStore = defineStore('data', {
 	actions: {
 		async fetchData() {
 			try {
-				const res = await fetch('/db.json')
-				const data = await res.json()
+				const data = await getDatabaseData()
+
 				this.title = data.titleTask
-				this.color = res.titleColor
-				console.log(res)
+				this.color = data.titleColor
 			} catch (error) {
 				console.error('Ошибка при загрузке данных:', error)
 			}
