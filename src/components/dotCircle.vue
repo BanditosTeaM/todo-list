@@ -18,14 +18,9 @@ export default {
 
 <style>
 .circle {
+	display: inline-block;
 	width: 10px;
 	height: 10px;
-	flex-shrink: 0;
 	border-radius: 50%;
-	cursor: pointer;
-	display: inline-block;
-	margin-top: 14px;
-	margin-right: 10px;
-	margin-left: 12px;
 }
 </style>

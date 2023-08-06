@@ -1,5 +1,5 @@
 <script>
-import modalWindow from './components/modalwindowFolder.vue'
+import modalWindow from './components/modalWindowFolder.vue'
 import dotCircle from './components/dotCircle.vue'
 import { useDataStore } from './store'
 
@@ -11,6 +11,7 @@ export default {
 	setup() {
 		const dataStore = useDataStore()
 		dataStore.fetchData()
+		dataStore.initialize()
 		return { dataStore }
 	},
 	data() {
@@ -38,38 +39,41 @@ export default {
 <template>
 	<div class="container">
 		<div class="menu">
-			<div class="allTask">
-				<router-link to="/">
-					<img
-						src="./assets/allTask.svg"
-						alt=""
-					/>
-					Все задачи
-				</router-link>
-			</div>
+			<router-link
+				to="/"
+				class="allTask"
+			>
+				<img
+					src="./assets/allTask.svg"
+					alt=""
+				/>
+				Все задачи
+			</router-link>
 
 			<nav class="menuNav">
 				<ul>
 					<li
 						v-for="title in dataStore.title"
 						:key="title.id"
-						class="titleTask"
-						:class="{ active: activeTask === title.id }"
-						@click="changeBackground(title.id)"
 					>
-						<router-link :to="'/task-info/' + title.id">
-							<dotCircle :color="getColorById(title.colorId)" />
-							{{ title.title }}
-						</router-link>
-						<button
-							class="deleteTask"
-							@click="dataStore.deleteFolder(title.id)"
+						<router-link
+							:to="'/task-info/' + title.id"
+							class="titleTask"
 						>
-							<img
-								src="./assets/hoverClose.svg"
-								alt="X"
-							/>
-						</button>
+							<div class="titleTaskInnerWrapper">
+								<dotCircle :color="getColorById(title.colorId)" />
+								{{ title.title }}
+							</div>
+							<button
+								class="deleteTask"
+								@click="dataStore.deleteFolder(title.id)"
+							>
+								<img
+									src="./assets/hoverClose.svg"
+									alt="X"
+								/>
+							</button>
+						</router-link>
 					</li>
 				</ul>
 			</nav>
@@ -98,8 +102,6 @@ export default {
 	background-color: #f4f6f8;
 	border: 0;
 	cursor: pointer;
-	float: right;
-	padding-top: 13px;
 }
 .allTask img {
 	width: 18px;
@@ -111,19 +113,28 @@ export default {
 	height: 10px;
 	flex-shrink: 0;
 }
+.titleTask {
+	padding: 5px 10px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 200px;
+	height: 35px;
+}
+.titleTaskInnerWrapper {
+	display: flex;
+	align-items: center;
+	column-gap: 10px;
+}
 .titleTask:hover .deleteTask {
 	opacity: 1;
 }
-.titleTask.active .deleteTask {
+.titleTask.router-link-active .deleteTask {
 	background: #fff;
 	opacity: 1;
 }
-.titleTask {
-	width: 200px;
-	height: 35px;
-	flex-shrink: 0;
-}
-.titleTask.active {
+
+.titleTask.router-link-active {
 	width: 200px;
 	height: 37px;
 	flex-shrink: 0;
@@ -154,6 +165,26 @@ export default {
 	display: flex;
 	flex-direction: row;
 }
+
+.allTask {
+	padding: 5px 10px;
+
+	width: 200px;
+	height: 35px;
+
+	display: flex;
+	align-items: center;
+	justify-content: start;
+
+	column-gap: 10px;
+}
+
+.allTask.router-link-active {
+	border-radius: 4px;
+	background: #fff;
+	box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.05);
+}
+
 .allTask,
 .openWindow {
 	margin-top: 10px;
