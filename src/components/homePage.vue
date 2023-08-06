@@ -1,32 +1,25 @@
 <script>
-import database from '../db.json'
+import { useDataStore } from '../store'
 
 export default {
+	setup() {
+		const dataStore = useDataStore()
+		dataStore.fetchData()
+		return { dataStore }
+	},
 	data() {
 		return {
-			isModalWindowOpen: false,
-			colors: [],
-			titles: [],
-			tasks: []
+			isModalWindowOpen: false
 		}
 	},
-	mounted() {
-		this.fetchData()
-	},
 	methods: {
-		fetchData() {
-			this.database = database
-			this.colors = database.titleColor
-			this.titles = database.titleTask
-			this.tasks = database.infoTask
-		},
 		getColorById(id) {
-			const colorObj = this.colors.find(color => color.id === id)
+			const colorObj = this.dataStore.color.find(color => color.id === id)
 			return colorObj ? colorObj.color : ''
 		},
 
 		getTaskById(id) {
-			const tasksObj = this.tasks.find(task => task.taskId === id)
+			const tasksObj = this.dataStore.task.find(task => task.id === id)
 			return tasksObj ? tasksObj.task : ''
 		}
 	}
@@ -35,7 +28,7 @@ export default {
 <template>
 	<div>
 		<div
-			v-for="title in titles"
+			v-for="title in dataStore.title"
 			:key="title.id"
 			class="taskList"
 		>
@@ -51,7 +44,7 @@ export default {
 						type="checkbox"
 					/>
 					<span class="checkBox"></span>
-					{{ getTaskById(title.taskId) }}
+					{{ getTaskById(title.id) }}
 				</label>
 			</h2>
 		</div>
@@ -61,7 +54,7 @@ export default {
 <style scoped>
 @font-face {
 	font-family: 'Lato';
-	src: url('./assets/fonts/Lato-Regular.ttf') format('truetype');
+	src: url('../assets/fonts/Lato-Regular.ttf') format('truetype');
 }
 @font-face {
 	font-family: 'Montserrat';

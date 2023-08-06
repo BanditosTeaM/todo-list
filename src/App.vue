@@ -1,7 +1,6 @@
 <script>
-import modalWindow from './components/modalWindowFolder.vue'
+import modalWindow from './components/modalwindowFolder.vue'
 import dotCircle from './components/dotCircle.vue'
-import database from './db.json'
 import { useDataStore } from './store'
 
 export default {
@@ -12,27 +11,17 @@ export default {
 	setup() {
 		const dataStore = useDataStore()
 		dataStore.fetchData()
-		console.log(dataStore.title)
 		return { dataStore }
 	},
 	data() {
 		return {
 			isModalWindowOpen: false,
-			tasks: [],
 			activeTask: null
 		}
 	},
-	mounted() {
-		this.fetchData()
-	},
 	methods: {
-		fetchData() {
-			this.colors = database.titleColor
-			this.titles = database.titleTask
-			this.tasks = database.infoTask
-		},
 		getColorById(id) {
-			const colorObj = this.colors.find(color => color.id === id)
+			const colorObj = this.dataStore.color.find(color => color.id === id)
 			return colorObj ? colorObj.color : ''
 		},
 		changeBackground(id) {
@@ -47,7 +36,6 @@ export default {
 </script>
 
 <template>
-	{{ console.log(dataStore.title) }}
 	<div class="container">
 		<div class="menu">
 			<div class="allTask">
@@ -63,7 +51,7 @@ export default {
 			<nav class="menuNav">
 				<ul>
 					<li
-						v-for="title in titles"
+						v-for="title in dataStore.title"
 						:key="title.id"
 						class="titleTask"
 						:class="{ active: activeTask === title.id }"
@@ -71,8 +59,12 @@ export default {
 					>
 						<router-link :to="'/task-info/' + title.id">
 							<dotCircle :color="getColorById(title.colorId)" />
+							{{ title.title }}
 						</router-link>
-						<button class="deleteTask">
+						<button
+							class="deleteTask"
+							@click="dataStore.deleteFolder(title.id)"
+						>
 							<img
 								src="./assets/hoverClose.svg"
 								alt="X"

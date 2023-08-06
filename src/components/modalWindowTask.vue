@@ -1,6 +1,19 @@
 <script>
+import { useDataStore } from '../store'
+
 export default {
+	props: {
+		id: {
+			type: Number,
+			required: true
+		}
+	},
 	emits: ['close'],
+	setup() {
+		const dataStore = useDataStore()
+		dataStore.fetchData()
+		return { dataStore }
+	},
 	methods: {
 		close() {
 			this.$emit('close')
@@ -13,13 +26,19 @@ export default {
 	<div class="modalWindow">
 		<div>
 			<input
+				v-model="dataStore.inputTask"
 				type="text"
 				placeholder="Текст задачи"
 				class="inputAddTask"
 			/>
 		</div>
 		<div class="buttonsAddTask">
-			<button class="addTask">Добавить задачу</button>
+			<button
+				class="addTask"
+				@click="dataStore.addTask(id)"
+			>
+				Добавить задачу
+			</button>
 			<button
 				class="cancelTask"
 				@click="close"

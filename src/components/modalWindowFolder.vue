@@ -1,21 +1,21 @@
 <script>
 import database from '../db.json'
+import { useDataStore } from '../store'
 
 export default {
 	emits: ['close'],
+	setup() {
+		const dataStore = useDataStore()
+		dataStore.fetchData()
+		return { dataStore }
+	},
 	data() {
 		return {
 			titleColor: database.titleColor
 		}
 	},
-	mounted() {
-		this.fetchCircles()
-	},
+	mounted() {},
 	methods: {
-		fetchCircles() {
-			// Загрузка данных из файла database.json
-			this.circles = database.titleColor
-		},
 		close() {
 			this.$emit('close')
 		}
@@ -38,6 +38,7 @@ export default {
 		</div>
 		<div>
 			<input
+				v-model="dataStore.inputFolder"
 				class="InputFolder"
 				type="text"
 				placeholder="Название папки"
@@ -45,7 +46,7 @@ export default {
 		</div>
 
 		<label
-			v-for="circle in titleColor"
+			v-for="circle in dataStore.color"
 			:key="circle.id"
 			class="circle-div"
 		>
@@ -57,11 +58,12 @@ export default {
 			<span
 				class="circle-span"
 				:style="{ backgroundColor: circle.color }"
+				@click="dataStore.getColorIdForFolder(circle.id)"
 			></span>
 		</label>
 
 		<div class="buttonAddFolder">
-			<button>Добавить</button>
+			<button @click="dataStore.addTitle()">Добавить</button>
 		</div>
 	</div>
 </template>

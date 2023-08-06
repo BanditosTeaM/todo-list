@@ -1,6 +1,6 @@
 <script>
-import database from '../db.json'
 import modalWindowTask from './modalWindowTask.vue'
+import { useDataStore } from '../store'
 
 export default {
 	components: {
@@ -12,58 +12,56 @@ export default {
 			required: true
 		}
 	},
+	setup() {
+		const dataStore = useDataStore()
+		dataStore.fetchData()
+		return { dataStore }
+	},
 
 	data() {
 		return {
-			isModalWindowTaskOpen: false,
-			colors: [],
-			titles: [],
-			tasks: []
+			isModalWindowTaskOpen: false
 		}
 	},
-
 	computed: {
 		numberedTaskId() {
 			return Number(this.id)
 		},
 		titleData() {
-			const title = this.titles.find(title => title.id === this.numberedTaskId)
+			const title = this.dataStore.title.find(
+				title => title.id === this.numberedTaskId
+			)
 
 			return title ? title.title : ''
 		},
 
 		taskData() {
-			const task = this.tasks.find(task => task.id === this.numberedTaskId)
-
+			const task = this.dataStore.task.find(
+				task => task.taskId === this.numberedTaskId
+			)
 			return task ? task.task : ''
 		},
 		getColorData() {
-			const color = this.colors.find(color => color.id === this.numberedTaskId)
-
-			return color ? color.color : ''
+			const color = this.dataStore.color.find(
+				color => color.id === this.dataStore.title
+			)
+			return color ? color.color : 'не найдено'
+		},
+		checkVisibleTask() {
+			const visibleTask = this.dataStore.task.find(
+				vTask => vTask.taskId === this.numberedTaskId
+			)
+			return visibleTask ? visibleTask.taskId : ''
 		}
 	},
-
-	mounted() {
-		this.fetchData()
-	},
-
 	methods: {
-		fetchData() {
-			// this.database = database
-			this.colors = database.titleColor
-			this.titles = database.titleTask
-			this.tasks = database.infoTask
-		},
-
-		getColorById(id) {
-			const colorObj = this.colors.find(color => color.id === id)
-			return colorObj ? colorObj.color : ''
+		getIdTask(id) {
+			const idTask = this.dataStore.task.find(taskID => taskID.taskId === id)
+			return idTask ? idTask.id : 'Не найдено'
 		}
 	}
 }
 </script>
-
 <template>
 	<div>
 		<div>
@@ -71,22 +69,31 @@ export default {
 				{{ titleData }}
 			</h1>
 			<hr />
-			<h2>
-				<label class="check">
-					<input
-						class="checkInput"
-						type="checkbox"
-					/>
-					<span class="checkBox"></span>
-					{{ taskData }}
-					<button class="deleteTask">
-						<img
-							src="../assets/hoverClose.svg"
-							alt="X"
+			<div v-if="checkVisibleTask">
+				<h2>
+					<label class="check">
+						<input
+							class="checkInput"
+							type="checkbox"
 						/>
-					</button>
-				</label>
-			</h2>
+						<span class="checkBox"></span>
+						{{ taskData }}
+						<button
+							class="deleteTask"
+							@click="dataStore.deleteTask(getIdTask(numberedTaskId))"
+						>
+							<img
+								src="../assets/hoverClose.svg"
+								alt="X"
+							/>
+						</button>
+					</label>
+				</h2>
+			</div>
+			<div v-else>
+				<h2>Мой голубчик, задач нету</h2>
+			</div>
+
 			<a
 				class="addTask"
 				@click="isModalWindowTaskOpen = true"
@@ -95,6 +102,7 @@ export default {
 			</a>
 			<modalWindowTask
 				v-if="isModalWindowTaskOpen"
+				:id="numberedTaskId"
 				@close="isModalWindowTaskOpen = false"
 			/>
 		</div>
@@ -104,7 +112,7 @@ export default {
 <style scoped>
 @font-face {
 	font-family: 'Lato';
-	src: url('./assets/fonts/Lato-Regular.ttf') format('truetype');
+	src: url('../assets/fonts/Lato-Regular.ttf') format('truetype');
 }
 @font-face {
 	font-family: 'Montserrat';
