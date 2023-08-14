@@ -15,6 +15,7 @@ export default {
 	setup() {
 		const dataStore = useDataStore()
 		dataStore.fetchData()
+		dataStore.initializeTask()
 		return { dataStore }
 	},
 
@@ -42,8 +43,11 @@ export default {
 			return task ? task.task : ''
 		},
 		getColorData() {
+			const idcolor = this.dataStore.title.find(
+				title => title.id === this.numberedTaskId
+			)
 			const color = this.dataStore.color.find(
-				color => color.id === this.dataStore.title
+				color => color.id === idcolor.colorId
 			)
 			return color ? color.color : 'не найдено'
 		},

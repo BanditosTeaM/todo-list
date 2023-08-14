@@ -11,7 +11,7 @@ export default {
 	setup() {
 		const dataStore = useDataStore()
 		dataStore.fetchData()
-		dataStore.initialize()
+		dataStore.initializeTitle()
 		return { dataStore }
 	},
 	data() {

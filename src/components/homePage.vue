@@ -5,6 +5,7 @@ export default {
 	setup() {
 		const dataStore = useDataStore()
 		dataStore.fetchData()
+		dataStore.initializeTask()
 		return { dataStore }
 	},
 	data() {
@@ -19,7 +20,7 @@ export default {
 		},
 
 		getTaskById(id) {
-			const tasksObj = this.dataStore.task.find(task => task.id === id)
+			const tasksObj = this.dataStore.task.find(task => task.taskId === id)
 			return tasksObj ? tasksObj.task : ''
 		}
 	}
@@ -36,17 +37,19 @@ export default {
 				{{ title.title }}
 			</h1>
 			<hr />
-
-			<h2>
-				<label>
-					<input
-						class="checkInput"
-						type="checkbox"
-					/>
-					<span class="checkBox"></span>
-					{{ getTaskById(title.id) }}
-				</label>
-			</h2>
+			<div v-if="getTaskById(title.id)">
+				<h2>
+					<label>
+						<input
+							class="checkInput"
+							type="checkbox"
+						/>
+						<span class="checkBox"></span>
+						{{ getTaskById(title.id) }}
+					</label>
+				</h2>
+			</div>
+			<div v-else>Задач нету</div>
 		</div>
 	</div>
 </template>

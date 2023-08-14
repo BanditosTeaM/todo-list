@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { getDatabaseData } from './api/getDatabaseOld'
 
 const STORAGE_TITLE_KEY = 'infoTitle'
+const STORAGE_TASK_KEY = 'infoTask'
 
 export const useDataStore = defineStore('data', {
 	state: () => ({
@@ -14,7 +15,7 @@ export const useDataStore = defineStore('data', {
 		inputTask: ''
 	}),
 	actions: {
-		initialize() {
+		initializeTitle() {
 			const storedTitles = localStorage.getItem(STORAGE_TITLE_KEY)
 			if (!storedTitles) return
 
@@ -23,14 +24,25 @@ export const useDataStore = defineStore('data', {
 
 			this.title = jsonTitles
 		},
+		initializeTask() {
+			const storedTasks = localStorage.getItem(STORAGE_TASK_KEY)
+			if (!storedTasks) return
+
+			const jsonTasks = JSON.parse(storedTasks)
+			if (!jsonTasks) return
+
+			this.task = jsonTasks
+		},
 		async fetchData() {
 			try {
 				this.data = await getDatabaseData()
 				if (this.title.length === 0) {
 					this.title = this.data.titleTask
 				}
+				if (this.task.length === 0) {
+					this.task = this.data.infoTask
+				}
 				this.color = this.data.titleColor
-				this.task = this.data.infoTask
 			} catch (error) {
 				console.error('Ошибка при загрузке данных:', error)
 			}
@@ -41,7 +53,7 @@ export const useDataStore = defineStore('data', {
 		},
 		deleteTask(id) {
 			this.task = this.task.filter(task => task.id !== id)
-			this.addToLocalStorage()
+			localStorage.setItem(STORAGE_TASK_KEY, JSON.stringify(this.task))
 		},
 		addTitle() {
 			this.title.push({
@@ -49,21 +61,15 @@ export const useDataStore = defineStore('data', {
 				colorId: this.colorIDforFolder,
 				title: this.inputFolder
 			})
-			this.addToLocalStorage()
-		},
-		// addTask(id) {
-		// 	this.task.push({
-		// 		id: this.task.length + 1,
-		// 		taskId: id,
-		// 		task: this.inputTask
-		// 	})
-		// 	this.addToLocalStorage()
-		// },
-		addToLocalStorage() {
 			localStorage.setItem(STORAGE_TITLE_KEY, JSON.stringify(this.title))
-			const storedTitles = localStorage.getItem(STORAGE_TITLE_KEY)
-			this.title = JSON.parse(storedTitles)
-			console.log(this.title)
+		},
+		addTask(id) {
+			this.task.push({
+				id: this.task.length + 1,
+				taskId: id,
+				task: this.inputTask
+			})
+			localStorage.setItem(STORAGE_TASK_KEY, JSON.stringify(this.task))
 		},
 
 		getColorIdForFolder(id) {
