@@ -27,6 +27,7 @@ export default {
 		<div>
 			<input
 				v-model="dataStore.inputTask"
+				:maxlength="100"
 				type="text"
 				placeholder="Текст задачи"
 				class="inputAddTask"

@@ -1,22 +1,25 @@
 <script>
-import database from '../db.json'
 import { useDataStore } from '../store'
+import ClickOutside from 'vue-click-outside'
 
 export default {
+	directives: {
+		ClickOutside
+	},
 	emits: ['close'],
 	setup() {
 		const dataStore = useDataStore()
 		dataStore.fetchData()
 		return { dataStore }
 	},
-	data() {
-		return {
-			titleColor: database.titleColor
-		}
+	mounted() {
+		this.popupItem = this.$el
+		this.$el.focus()
 	},
-	mounted() {},
 	methods: {
 		close() {
+			console.log('Clicked outside modal')
+			this.dataStore.closeWindowFolder
 			this.$emit('close')
 		}
 	}
@@ -24,46 +27,49 @@ export default {
 </script>
 
 <template>
-	<div class="modalWindow">
-		<div class="divButtonClose">
-			<button
-				class="buttonClose"
-				@click="close"
-			>
-				<img
-					src="../assets/closeButton.svg"
-					alt="X"
+	<div v-click-outside="close">
+		<div class="modalWindow">
+			<div class="divButtonClose">
+				<button
+					class="buttonClose"
+					@click="close"
+				>
+					<img
+						src="../assets/closeButton.svg"
+						alt="X"
+					/>
+				</button>
+			</div>
+			<div>
+				<input
+					v-model="dataStore.inputFolder"
+					:maxlength="20"
+					class="InputFolder"
+					type="text"
+					placeholder="Название папки"
 				/>
-			</button>
-		</div>
-		<div>
-			<input
-				v-model="dataStore.inputFolder"
-				class="InputFolder"
-				type="text"
-				placeholder="Название папки"
-			/>
-		</div>
+			</div>
 
-		<label
-			v-for="circle in dataStore.color"
-			:key="circle.id"
-			class="circle-div"
-		>
-			<input
-				class="circle-input"
-				type="radio"
-				name="circle-radio"
-			/>
-			<span
-				class="circle-span"
-				:style="{ backgroundColor: circle.color }"
-				@click="dataStore.getColorIdForFolder(circle.id)"
-			></span>
-		</label>
+			<label
+				v-for="circle in dataStore.color"
+				:key="circle.id"
+				class="circle-div"
+			>
+				<input
+					class="circle-input"
+					type="radio"
+					name="circle-radio"
+				/>
+				<span
+					class="circle-span"
+					:style="{ backgroundColor: circle.color }"
+					@click="dataStore.getColorIdForFolder(circle.id)"
+				></span>
+			</label>
 
-		<div class="buttonAddFolder">
-			<button @click="dataStore.addTitle()">Добавить</button>
+			<div class="buttonAddFolder">
+				<button @click="dataStore.addTitle()">Добавить</button>
+			</div>
 		</div>
 	</div>
 </template>
@@ -89,7 +95,6 @@ export default {
 .circle-input:checked + .circle-span {
 	box-shadow: 0 0 0 2px #525252;
 }
-
 .modalWindow {
 	background-color: #ffffff;
 	height: 150px;
@@ -98,6 +103,9 @@ export default {
 	margin-top: 25px;
 	margin-left: 30px;
 }
+/* .modalWindow:focus {
+	outline: none;
+} */
 .InputFolder {
 	width: 200px;
 	height: 32px;

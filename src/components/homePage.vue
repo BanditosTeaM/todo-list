@@ -16,7 +16,7 @@ export default {
 	methods: {
 		getColorById(id) {
 			const colorObj = this.dataStore.color.find(color => color.id === id)
-			return colorObj ? colorObj.color : ''
+			return colorObj ? colorObj.color : '#000'
 		},
 
 		getTaskById(id) {
@@ -29,7 +29,7 @@ export default {
 <template>
 	<div>
 		<div
-			v-for="title in dataStore.title"
+			v-for="title in dataStore.getTitleTasksWithInfoTasks"
 			:key="title.id"
 			class="taskList"
 		>
@@ -38,14 +38,17 @@ export default {
 			</h1>
 			<hr />
 			<div v-if="getTaskById(title.id)">
-				<h2>
+				<h2
+					v-for="task in title.tasks"
+					:key="task.id"
+				>
 					<label>
 						<input
 							class="checkInput"
 							type="checkbox"
 						/>
 						<span class="checkBox"></span>
-						{{ getTaskById(title.id) }}
+						{{ task.task }}
 					</label>
 				</h2>
 			</div>
@@ -93,6 +96,7 @@ h1 {
 	line-height: normal;
 }
 h2 {
+	display: block;
 	color: #000;
 	font-family: 'Lato', sans-serif;
 	font-size: 16px;

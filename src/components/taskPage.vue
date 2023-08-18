@@ -1,10 +1,12 @@
 <script>
 import modalWindowTask from './modalWindowTask.vue'
+import modalWindowEditTitle from './modalWindowEditTitle.vue'
 import { useDataStore } from '../store'
 
 export default {
 	components: {
-		modalWindowTask
+		modalWindowTask,
+		modalWindowEditTitle
 	},
 	props: {
 		id: {
@@ -21,7 +23,8 @@ export default {
 
 	data() {
 		return {
-			isModalWindowTaskOpen: false
+			isModalWindowTaskOpen: false,
+			isModalWindowEditTitleOpen: false
 		}
 	},
 	computed: {
@@ -49,7 +52,7 @@ export default {
 			const color = this.dataStore.color.find(
 				color => color.id === idcolor.colorId
 			)
-			return color ? color.color : 'не найдено'
+			return color ? color.color : '#000'
 		},
 		checkVisibleTask() {
 			const visibleTask = this.dataStore.task.find(
@@ -69,19 +72,38 @@ export default {
 <template>
 	<div>
 		<div>
-			<h1 :style="{ color: getColorData }">
-				{{ titleData }}
-			</h1>
+			<div class="titlePart">
+				<h1 :style="{ color: getColorData }">
+					{{ titleData }}
+				</h1>
+				<button
+					class="editButton"
+					@click="isModalWindowEditTitleOpen = true"
+				>
+					<img
+						src="../assets/editTitle.svg"
+						alt="EditSvg"
+					/>
+				</button>
+			</div>
+			<modalWindowEditTitle
+				v-if="isModalWindowEditTitleOpen"
+				:id="numberedTaskId"
+				@close="isModalWindowEditTitleOpen = false"
+			/>
 			<hr />
 			<div v-if="checkVisibleTask">
-				<h2>
+				<h2
+					v-for="task in dataStore.getTaskForIdTitle(numberedTaskId)"
+					:key="task.id"
+				>
 					<label class="check">
 						<input
 							class="checkInput"
 							type="checkbox"
 						/>
 						<span class="checkBox"></span>
-						{{ taskData }}
+						{{ task.task }}
 						<button
 							class="deleteTask"
 							@click="dataStore.deleteTask(getIdTask(numberedTaskId))"
@@ -173,7 +195,19 @@ export default {
 .checkInput:focus + .checkBox {
 	box-shadow: 0 0 0 2px black;
 }
+.titlePart:hover .editButton {
+	opacity: 1;
+}
+
+.editButton {
+	opacity: 0;
+	background-color: white;
+	border: 0;
+	cursor: pointer;
+	margin-left: 15px;
+}
 h1 {
+	display: inline-block;
 	font-family: 'Montserrat', sans-serif;
 	font-size: 32px;
 	font-style: normal;

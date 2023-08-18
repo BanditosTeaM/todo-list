@@ -1,9 +1,13 @@
 <script>
 import modalWindow from './components/modalWindowFolder.vue'
 import dotCircle from './components/dotCircle.vue'
+import ClickOutside from 'vue-click-outside'
 import { useDataStore } from './store'
 
 export default {
+	directives: {
+		ClickOutside
+	},
 	components: {
 		modalWindow,
 		dotCircle
@@ -16,21 +20,17 @@ export default {
 	},
 	data() {
 		return {
-			isModalWindowOpen: false,
 			activeTask: null
 		}
 	},
 	methods: {
 		getColorById(id) {
 			const colorObj = this.dataStore.color.find(color => color.id === id)
-			return colorObj ? colorObj.color : ''
+			return colorObj ? colorObj.color : '#000'
 		},
-		changeBackground(id) {
-			if (this.activeTask === id) {
-				this.activeItem = null
-			} else {
-				this.activeTask = id
-			}
+		navigationTo(id) {
+			this.dataStore.deleteFolder(id)
+			this.$router.push('/')
 		}
 	}
 }
@@ -64,28 +64,29 @@ export default {
 								<dotCircle :color="getColorById(title.colorId)" />
 								{{ title.title }}
 							</div>
-							<button
-								class="deleteTask"
-								@click="dataStore.deleteFolder(title.id)"
-							>
-								<img
-									src="./assets/hoverClose.svg"
-									alt="X"
-								/>
-							</button>
 						</router-link>
+						<button
+							class="deleteTask"
+							@click="navigationTo(title.id)"
+						>
+							<img
+								src="./assets/hoverClose.svg"
+								alt="X"
+							/>
+						</button>
 					</li>
 				</ul>
 			</nav>
 			<a
 				class="openWindow"
-				@click="isModalWindowOpen = true"
+				@click="dataStore.openWindowFolder"
 			>
 				+ Добавить папку
 			</a>
 			<modalWindow
-				v-if="isModalWindowOpen"
-				@close="isModalWindowOpen = false"
+				v-if="dataStore.isModalWindowOpen"
+				v-click-outside="dataStore.closeWindowFolder"
+				@close="dataStore.closeWindowFolder"
 			/>
 		</div>
 		<router-view class="infoTask"></router-view>
@@ -97,16 +98,19 @@ export default {
 	font-family: 'Lato';
 	src: url('./assets/fonts/Lato-Regular.ttf') format('truetype');
 }
-.deleteTask {
-	opacity: 0;
-	background-color: #f4f6f8;
-	border: 0;
-	cursor: pointer;
-}
 .allTask img {
 	width: 18px;
 	height: 18px;
 	flex-shrink: 0;
+}
+.deleteTask {
+	opacity: 0;
+	background: transparent;
+	border: 0;
+	cursor: pointer;
+	position: absolute;
+	margin-top: -30px;
+	margin-left: 195px;
 }
 .deleteTask img {
 	width: 10px;
@@ -126,11 +130,10 @@ export default {
 	align-items: center;
 	column-gap: 10px;
 }
-.titleTask:hover .deleteTask {
+li:hover .deleteTask {
 	opacity: 1;
 }
-.titleTask.router-link-active .deleteTask {
-	background: #fff;
+.titleTask.router-link-active + .deleteTask {
 	opacity: 1;
 }
 
@@ -206,6 +209,7 @@ ul {
 }
 li {
 	list-style-type: none;
+	display: inline-blockk;
 }
 a:active,
 a:hover,
