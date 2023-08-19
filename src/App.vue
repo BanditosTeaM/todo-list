@@ -1,13 +1,9 @@
 <script>
 import modalWindow from './components/modalWindowFolder.vue'
 import dotCircle from './components/dotCircle.vue'
-import ClickOutside from 'vue-click-outside'
 import { useDataStore } from './store'
 
 export default {
-	directives: {
-		ClickOutside
-	},
 	components: {
 		modalWindow,
 		dotCircle
@@ -85,7 +81,6 @@ export default {
 			</a>
 			<modalWindow
 				v-if="dataStore.isModalWindowOpen"
-				v-click-outside="dataStore.closeWindowFolder"
 				@close="dataStore.closeWindowFolder"
 			/>
 		</div>

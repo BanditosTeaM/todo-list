@@ -1,7 +1,11 @@
 <script>
 import { useDataStore } from '../store'
+import vClickOutside from 'click-outside-vue3'
 
 export default {
+	directives: {
+		clickOutside: vClickOutside.directive
+	},
 	props: {
 		id: {
 			type: Number,
@@ -24,35 +28,38 @@ export default {
 </script>
 
 <template>
-	<div class="modalWindow">
-		<div class="divButtonClose">
-			<button
-				class="buttonClose"
-				@click="close"
-			>
-				<img
-					src="../assets/closeButton.svg"
-					alt="X"
+	<div v-click-outside="close">
+		<div class="modalWindow">
+			<div class="divButtonClose">
+				<button
+					class="buttonClose"
+					@click="close"
+				>
+					<img
+						src="../assets/closeButton.svg"
+						alt="X"
+					/>
+				</button>
+			</div>
+			<div>
+				<input
+					v-model="newTitle"
+					:maxlength="20"
+					class="EditInput"
+					type="text"
+					placeholder="Новое название папки"
 				/>
-			</button>
-		</div>
-		<div>
-			<input
-				v-model="newTitle"
-				:maxlength="20"
-				class="EditInput"
-				type="text"
-				placeholder="Новое название папки"
-			/>
-		</div>
-		<div class="buttonEditTitle">
-			<button @click="dataStore.updateTitle(id, newTitle)">Изменить</button>
+			</div>
+			<div class="buttonEditTitle">
+				<button @click="dataStore.updateTitle(id, newTitle)">Изменить</button>
+			</div>
 		</div>
 	</div>
 </template>
 
 <style scoped>
 .modalWindow {
+	position: absolute;
 	background-color: #f4f6f8;
 	height: 120px;
 	width: 235px;

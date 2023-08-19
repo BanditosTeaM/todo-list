@@ -1,7 +1,11 @@
 <script>
 import { useDataStore } from '../store'
+import vClickOutside from 'click-outside-vue3'
 
 export default {
+	directives: {
+		clickOutside: vClickOutside.directive
+	},
 	props: {
 		id: {
 			type: Number,
@@ -23,29 +27,31 @@ export default {
 </script>
 
 <template>
-	<div class="modalWindow">
-		<div>
-			<input
-				v-model="dataStore.inputTask"
-				:maxlength="100"
-				type="text"
-				placeholder="Текст задачи"
-				class="inputAddTask"
-			/>
-		</div>
-		<div class="buttonsAddTask">
-			<button
-				class="addTask"
-				@click="dataStore.addTask(id)"
-			>
-				Добавить задачу
-			</button>
-			<button
-				class="cancelTask"
-				@click="close"
-			>
-				Отмена
-			</button>
+	<div v-click-outside="close">
+		<div class="modalWindow">
+			<div>
+				<input
+					v-model="dataStore.inputTask"
+					:maxlength="100"
+					type="text"
+					placeholder="Текст задачи"
+					class="inputAddTask"
+				/>
+			</div>
+			<div class="buttonsAddTask">
+				<button
+					class="addTask"
+					@click="dataStore.addTask(id)"
+				>
+					Добавить задачу
+				</button>
+				<button
+					class="cancelTask"
+					@click="close"
+				>
+					Отмена
+				</button>
+			</div>
 		</div>
 	</div>
 </template>

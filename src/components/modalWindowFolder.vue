@@ -1,10 +1,10 @@
 <script>
 import { useDataStore } from '../store'
-import ClickOutside from 'vue-click-outside'
+import vClickOutside from 'click-outside-vue3'
 
 export default {
 	directives: {
-		ClickOutside
+		clickOutside: vClickOutside.directive
 	},
 	emits: ['close'],
 	setup() {
@@ -18,8 +18,6 @@ export default {
 	},
 	methods: {
 		close() {
-			console.log('Clicked outside modal')
-			this.dataStore.closeWindowFolder
 			this.$emit('close')
 		}
 	}
@@ -103,9 +101,6 @@ export default {
 	margin-top: 25px;
 	margin-left: 30px;
 }
-/* .modalWindow:focus {
-	outline: none;
-} */
 .InputFolder {
 	width: 200px;
 	height: 32px;
