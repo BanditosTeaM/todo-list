@@ -104,9 +104,10 @@ export default {
 						/>
 						<span class="checkBox"></span>
 						{{ task.task }}
+						{{ console.log(task.id) }}
 						<button
 							class="deleteTask"
-							@click="dataStore.deleteTask(getIdTask(numberedTaskId))"
+							@click="dataStore.deleteTask(task.id)"
 						>
 							<img
 								src="../assets/hoverClose.svg"
@@ -231,5 +232,10 @@ hr {
 	background-color: #f2f2f2;
 	margin-top: 20px;
 	margin-bottom: 35px;
+}
+@media (max-width: 768px) {
+	hr {
+		width: 250px;
+	}
 }
 </style>

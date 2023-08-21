@@ -41,7 +41,7 @@ export default {
 			<div>
 				<input
 					v-model="dataStore.inputFolder"
-					:maxlength="20"
+					:maxlength="17"
 					class="InputFolder"
 					type="text"
 					placeholder="Название папки"
@@ -137,5 +137,26 @@ export default {
 }
 .buttonAddFolder button:active {
 	background-color: #256e4e;
+}
+@media (max-width: 425px) {
+	.modalWindow {
+		width: 142px;
+		height: 200px;
+	}
+	.buttonAddFolder button {
+		width: 100px;
+	}
+	.InputFolder {
+		width: 130px;
+		margin-left: 5px;
+		padding: 5px;
+	}
+	.circle-div {
+		margin-left: 5px;
+	}
+	.circle-span {
+		width: 25px;
+		height: 25px;
+	}
 }
 </style>

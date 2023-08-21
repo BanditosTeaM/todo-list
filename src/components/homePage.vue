@@ -114,4 +114,15 @@ hr {
 	margin-top: 20px;
 	margin-bottom: 35px;
 }
+@media (max-width: 780px) {
+	hr {
+		width: 300px;
+	}
+}
+@media (max-width: 425px) {
+	hr {
+		width: 250px;
+		margin-left: -10px;
+	}
+}
 </style>

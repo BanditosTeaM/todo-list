@@ -70,6 +70,7 @@ export const useDataStore = defineStore('data', {
 		},
 		deleteTask(id) {
 			this.task = this.task.filter(task => task.id !== id)
+			console.log('Вы удалили задачу с id: ' + id)
 			storage.setItem(STORAGE_TASK_KEY, JSON.stringify(this.task))
 		},
 		addTitle() {

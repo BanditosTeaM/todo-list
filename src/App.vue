@@ -16,7 +16,8 @@ export default {
 	},
 	data() {
 		return {
-			activeTask: null
+			activeTask: null,
+			show: false
 		}
 	},
 	methods: {
@@ -27,6 +28,9 @@ export default {
 		navigationTo(id) {
 			this.dataStore.deleteFolder(id)
 			this.$router.push('/')
+		},
+		toggleMenu() {
+			this.show = !this.show
 		}
 	}
 }
@@ -34,7 +38,16 @@ export default {
 
 <template>
 	<div class="container">
-		<div class="menu">
+		<span
+			class="showMenu"
+			@click="toggleMenu"
+		>
+			X
+		</span>
+		<div
+			class="menu"
+			:class="{ 'menu-open': show }"
+		>
 			<router-link
 				to="/"
 				class="allTask"
@@ -112,6 +125,7 @@ export default {
 	height: 10px;
 	flex-shrink: 0;
 }
+
 .titleTask {
 	padding: 5px 10px;
 	display: flex;
@@ -163,17 +177,13 @@ li:hover .deleteTask {
 	display: flex;
 	flex-direction: row;
 }
-
 .allTask {
 	padding: 5px 10px;
-
 	width: 200px;
 	height: 35px;
-
 	display: flex;
 	align-items: center;
 	justify-content: start;
-
 	column-gap: 10px;
 }
 
@@ -188,6 +198,7 @@ li:hover .deleteTask {
 	margin-top: 10px;
 	margin-left: 25px;
 }
+
 .menu {
 	font-family: Roboto;
 	font-size: 14px;
@@ -195,10 +206,19 @@ li:hover .deleteTask {
 	font-weight: 400;
 	line-height: normal;
 	letter-spacing: 0.15px;
-	background-color: #f4f6f8;
 	width: 275px;
-	height: 100vh;
+	min-height: 100vh;
+	background-color: #f4f6f8; /* Ваш цвет фона */
 }
+.showMenu {
+	position: absolute;
+	display: none;
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 0;
+}
+
 ul {
 	padding-left: 10px;
 }
@@ -211,5 +231,32 @@ a:hover,
 a {
 	text-decoration: none;
 	color: black;
+}
+@media (max-width: 768px) {
+	.showMenu {
+		display: block;
+	}
+
+	.menu {
+		display: none;
+	}
+	.menu-open {
+		display: block;
+	}
+}
+@media (max-width: 425px) {
+	.menu {
+		width: 200px;
+	}
+
+	.allTask {
+		width: 150px;
+	}
+	.titleTask.router-link-active {
+		width: 150px;
+	}
+	.deleteTask {
+		margin-left: 140px;
+	}
 }
 </style>
