@@ -31,6 +31,11 @@ export default {
 		numberedTaskId() {
 			return Number(this.id)
 		},
+
+		/* 
+			Why not use function like store getTitleTasksWithInfoTasks
+			For get title with tasks?
+		*/
 		titleData() {
 			const title = this.dataStore.title.find(
 				title => title.id === this.numberedTaskId
@@ -45,6 +50,8 @@ export default {
 			)
 			return task ? task.task : ''
 		},
+
+		// TODO: Remove it after integrate colors in title
 		getColorData() {
 			const idcolor = this.dataStore.title.find(
 				title => title.id === this.numberedTaskId
@@ -62,6 +69,7 @@ export default {
 		}
 	},
 	methods: {
+		// TODO: Not used method
 		getIdTask(id) {
 			const idTask = this.dataStore.task.find(taskID => taskID.taskId === id)
 			return idTask ? idTask.id : 'Не найдено'

@@ -3,6 +3,7 @@ import { useDataStore } from '../store'
 
 export default {
 	setup() {
+		// TODO: Same with App.vue
 		const dataStore = useDataStore()
 		dataStore.fetchData()
 		dataStore.initializeTask()
@@ -10,16 +11,19 @@ export default {
 	},
 	data() {
 		return {
+			// TODO: Remove not used var
 			isModalWindowOpen: false
 		}
 	},
 	methods: {
+		// TODO: Delete it after integrate colors to title
 		getColorById(id) {
 			const colorObj = this.dataStore.color.find(color => color.id === id)
 			return colorObj ? colorObj.color : '#000'
 		},
 
 		getTaskById(id) {
+			// U have in store method for it
 			const tasksObj = this.dataStore.task.find(task => task.taskId === id)
 			return tasksObj ? tasksObj.task : ''
 		}

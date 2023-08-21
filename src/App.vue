@@ -8,27 +8,36 @@ export default {
 		modalWindow,
 		dotCircle
 	},
+
 	setup() {
 		const dataStore = useDataStore()
+		// First fetchData and only after initialize?
+		// TODO: Create main `initialize` method for initialize store
 		dataStore.fetchData()
 		dataStore.initializeTitle()
 		return { dataStore }
 	},
+
 	data() {
 		return {
 			activeTask: null,
 			show: false
 		}
 	},
+
 	methods: {
 		getColorById(id) {
 			const colorObj = this.dataStore.color.find(color => color.id === id)
 			return colorObj ? colorObj.color : '#000'
 		},
+
+		// Its method do: delete folder and navigation to home
+		// TODO: Rename it to like onDeleteFolder or onDeleteTitle
 		navigationTo(id) {
 			this.dataStore.deleteFolder(id)
 			this.$router.push('/')
 		},
+
 		toggleMenu() {
 			this.show = !this.show
 		}
@@ -42,6 +51,7 @@ export default {
 			class="showMenu"
 			@click="toggleMenu"
 		>
+			<!-- TODO: Change X to icon -->
 			X
 		</span>
 		<div
@@ -70,6 +80,7 @@ export default {
 							class="titleTask"
 						>
 							<div class="titleTaskInnerWrapper">
+								<!-- After intergate colors in title remove getColorById -->
 								<dotCircle :color="getColorById(title.colorId)" />
 								{{ title.title }}
 							</div>
@@ -90,6 +101,7 @@ export default {
 				class="openWindow"
 				@click="dataStore.openWindowFolder"
 			>
+				<!-- TODO: Change + to icon -->
 				+ Добавить папку
 			</a>
 			<modalWindow
