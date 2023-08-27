@@ -16,8 +16,6 @@ export default {
 	},
 	setup() {
 		const dataStore = useDataStore()
-		dataStore.fetchData()
-		dataStore.initializeTask()
 		return { dataStore }
 	},
 
@@ -32,64 +30,35 @@ export default {
 			return Number(this.id)
 		},
 
-		/* 
-			Why not use function like store getTitleTasksWithInfoTasks
-			For get title with tasks?
-		*/
-		titleData() {
-			const title = this.dataStore.title.find(
-				title => title.id === this.numberedTaskId
-			)
-
-			return title ? title.title : ''
-		},
-
-		taskData() {
-			const task = this.dataStore.task.find(
-				task => task.taskId === this.numberedTaskId
-			)
-			return task ? task.task : ''
-		},
-
-		// TODO: Remove it after integrate colors in title
-		getColorData() {
-			const idcolor = this.dataStore.title.find(
-				title => title.id === this.numberedTaskId
-			)
-			const color = this.dataStore.color.find(
-				color => color.id === idcolor.colorId
-			)
-			return color ? color.color : '#000'
-		},
 		checkVisibleTask() {
 			const visibleTask = this.dataStore.task.find(
 				vTask => vTask.taskId === this.numberedTaskId
 			)
 			return visibleTask ? visibleTask.taskId : ''
 		}
-	},
-	methods: {
-		// TODO: Not used method
-		getIdTask(id) {
-			const idTask = this.dataStore.task.find(taskID => taskID.taskId === id)
-			return idTask ? idTask.id : 'Не найдено'
-		}
 	}
 }
 </script>
 <template>
 	<div>
-		<div>
-			<div class="titlePart">
-				<h1 :style="{ color: getColorData }">
-					{{ titleData }}
+		<div
+			v-for="title in dataStore.getAllById(numberedTaskId)"
+			:key="title.id"
+		>
+			<div
+				v-for="color in title.colors"
+				:key="color.id"
+				class="titlePart"
+			>
+				<h1 :style="{ color: color.color }">
+					{{ title.title }}
 				</h1>
 				<button
 					class="editButton"
 					@click="isModalWindowEditTitleOpen = true"
 				>
 					<img
-						src="../assets/editTitle.svg"
+						src="../assets/image/editTitle.svg"
 						alt="EditSvg"
 					/>
 				</button>
@@ -102,7 +71,7 @@ export default {
 			<hr />
 			<div v-if="checkVisibleTask">
 				<h2
-					v-for="task in dataStore.getTaskForIdTitle(numberedTaskId)"
+					v-for="task in title.tasks"
 					:key="task.id"
 				>
 					<label class="check">
@@ -112,13 +81,12 @@ export default {
 						/>
 						<span class="checkBox"></span>
 						{{ task.task }}
-						{{ console.log(task.id) }}
 						<button
 							class="deleteTask"
 							@click="dataStore.deleteTask(task.id)"
 						>
 							<img
-								src="../assets/hoverClose.svg"
+								src="../assets/image/hoverClose.svg"
 								alt="X"
 							/>
 						</button>
@@ -199,7 +167,7 @@ export default {
 .checkInput:checked + .checkBox {
 	background-color: #4dd599;
 	box-shadow: 0 0 0 1px #4dd599;
-	background-image: url(../assets/checkedTask.svg);
+	background-image: url(../assets/image/checkedTask.svg);
 }
 .checkInput:focus + .checkBox {
 	box-shadow: 0 0 0 2px black;

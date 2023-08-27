@@ -1,95 +1,53 @@
 import { defineStore } from 'pinia'
 import { getDatabaseData } from './api/getDatabaseOld'
-import storage from './storage/index'
-
-// TODO: Move it to config
-const STORAGE_TITLE_KEY = 'infoTitle'
-const STORAGE_TASK_KEY = 'infoTask'
+import storageTitle from './storage/adapters/title'
+import storageTask from './storage/adapters/task'
+import variables from './variables'
 
 export const useDataStore = defineStore('data', {
 	state: () => ({
 		data: [],
 		title: [],
-		// TODO: Remove color and intergrate in in title
+		// TODO: Remove color and intergrate in title
 		color: [],
 		task: [],
-		colorIDforFolder: '',
-		// TODO: Why inputFolder its all store variable? It local var in allTitle()
-		inputFolder: '',
-		// TODO: Same as inputFolder
-		inputTask: '',
-		// TODO: Move open/close logic to component
-		isModalWindowOpen: false
+		colorIDforFolder: ''
 	}),
 
 	getters: {
-		/* 
-			TODO: Rename getTaskForIdTitle
-			This method get all tasks from store by taskId(connected title ID)
-
-			We not get task for id title
-			We get all tasks by titleId(now taskId)
-
-			EX: getTasksByTitleId
-		*/
-		getTaskForIdTitle: state => {
-			return id => state.task.filter(task => task.taskId === id)
+		getAllById: state => {
+			return id =>
+				state.title
+					.filter(title => title.id === id)
+					.map(title => {
+						const tasks = state.task.filter(task => task.taskId === id)
+						const colors = state.color.filter(
+							color => color.id === title.colorId
+						)
+						return {
+							...title,
+							tasks,
+							colors
+						}
+					})
 		},
 
-		/*
-			TODO: Rename getTitleTasksWithInfoTasks
-
-			This method transform all title's to title's with "tasks" field for output
-
-			EX: getTitlesWithIntegratedTasks
-			or
-			getTitlesWithTasks
-			or
-			...
-		*/
-		getTitleTasksWithInfoTasks: state => {
+		getTitlesWithTasks: state => {
 			return state.title.map(title => {
 				const tasks = state.task.filter(task => task.taskId === title.id)
+				const color =
+					state.color.find(color => color.id === title.colorId)?.color || '#000'
+
 				return {
 					...title,
-					tasks
+					tasks,
+					color
 				}
 			})
 		}
 	},
 
 	actions: {
-		initializeTitle() {
-			/*
-				Why our store has access to storage? What
-			*/
-			const storedTitles = storage.getItem(STORAGE_TITLE_KEY)
-			/*
-				INFO: We not need it check if really 
-				getItem return `null` or `stringified object`
-
-					// JSON.parse on `stringified object` return object
-				JSON.parse on null return `null`
-			*/
-			if (!storedTitles) return
-
-			const jsonTitles = JSON.parse(storedTitles)
-			if (!jsonTitles) return
-
-			this.title = jsonTitles
-		},
-
-		initializeTask() {
-			const storedTasks = storage.getItem(STORAGE_TASK_KEY)
-			if (!storedTasks) return
-
-			const jsonTasks = JSON.parse(storedTasks)
-			if (!jsonTasks) return
-
-			this.task = jsonTasks
-		},
-
-		// TODO: Move it func on top of `actions` for some structure
 		async fetchData() {
 			try {
 				this.data = await getDatabaseData()
@@ -102,127 +60,74 @@ export const useDataStore = defineStore('data', {
 					this.task = this.data.infoTask
 				}
 
-				// TODO: Why color is not in localstorage?
 				this.color = this.data.titleColor
 			} catch (error) {
-				/*
-					TODO: We need get it message only on not good fetch data from server 
-					But not on errors in store
-				*/
-				console.error('Ошибка при загрузке данных:', error)
+				if (error.response.status === 500) {
+					console.error('Ошибка при загрузке данных с сервера:', error.message)
+				} else {
+					console.error('Другая ошибка:', error)
+				}
 			}
+		},
+		initializeTitle() {
+			const jsonTitles = JSON.parse(storageTitle.getTitleInStorage())
+			if (!jsonTitles) return
+			this.title = jsonTitles
+		},
+
+		initializeTask() {
+			const jsonTasks = JSON.parse(storageTask.getTaskInStorage())
+			if (!jsonTasks) return
+
+			this.task = jsonTasks
 		},
 
 		deleteFolder(id) {
 			this.title = this.title.filter(title => title.id !== id)
-
-			/* 
-				TODO: Why our store has access to storage by some magic key? 
-				Create adapter for it
-
-				Looks like setTitlesInStorage(this.title)
-			*/
-			storage.setItem(STORAGE_TITLE_KEY, JSON.stringify(this.title))
+			storageTitle.setTitleInStorage(this.title)
 		},
 
 		deleteTask(id) {
 			this.task = this.task.filter(task => task.id !== id)
-
-			// TODO: Remove debug console.log
-			console.log('Вы удалили задачу с id: ' + id)
-
-			// TODO: Why our store has access to storage by some magic key?
-			storage.setItem(STORAGE_TASK_KEY, JSON.stringify(this.task))
+			storageTask.setTaskInStorage(this.task)
 		},
 
-		/*
-			addTitle should has two params:
-			1. name
-			2. colorId
-
-			Please, not use VUE reactivity for store variables as u do it
-		*/
-		addTitle() {
-			// TODO: Transform inputFolder to local variable
-			// TODO: Use `===` instead of `==`. I add it in eslint rules
-			if (this.inputFolder.length == 0 || this.inputFolder == ' ') {
-				// TODO: Remove magic variable. Move it to config
-				this.inputFolder = 'Новая папка'
+		addTitle(inputValue, id) {
+			if (String(inputValue).length === 0 || inputValue === ' ') {
+				inputValue = variables.newTitle
 			}
-
-			/*
-				Why max title id is not id of last title element?
-
-				And we can get all id's of titles and use Math.max()
-
-				EX: Math.max(0, ...this.title.map(title => title.id))
-
-				We dont need check on this.title.length > 0
-			*/
-			const maxId =
-				this.title.length > 0
-					? this.title.reduce((max, title) => Math.max(max, title.id), 0)
-					: 0
+			if (id === '') {
+				id = this.color[5].id
+			}
+			const maxId = Math.max(0, ...this.title.map(title => title.id))
 
 			this.title.push({
 				id: maxId + 1,
-				// TODO: Trahsform colorIDforFolder to function param
-				colorId: this.colorIDforFolder,
-				// TODO: Trahsform inputFolder to function param
-				title: this.inputFolder
+				colorId: id,
+				title: inputValue
 			})
-
-			// TODO: Why our store has access to storage by some magic key?
-			storage.setItem(STORAGE_TITLE_KEY, JSON.stringify(this.title))
+			storageTitle.setTitleInStorage(this.title)
 		},
 
-		/* 
-			XXX: Look addTitle
-
-			TODO: Rename id to `taskId` or better `titleId`
-		*/
-		addTask(id) {
-			if (this.inputTask.length == 0 || this.inputTask == ' ') {
-				// TODO: Move it to config
-				this.inputTask = 'Новая задача'
+		addTask(taskId, inputValue) {
+			var inputTask = inputValue
+			if (String(inputTask).length === 0 || inputTask === ' ') {
+				inputTask = variables.newTask
 			}
 
-			// XXX: Look addTitle
-			const maxId =
-				this.task.length > 0
-					? this.task.reduce((max, task) => Math.max(max, task.id), 0)
-					: 0
+			const maxId = Math.max(0, ...this.title.map(title => title.id))
 
 			this.task.push({
 				id: maxId + 1,
-				taskId: id,
-				task: this.inputTask
+				taskId: taskId,
+				task: inputTask
 			})
-
-			// TODO: Why our store has access to storage by some magic key?
-			storage.setItem(STORAGE_TASK_KEY, JSON.stringify(this.task))
-		},
-
-		// TODO: Its not get. Its set. In really we dont need `colorIDforFolder`
-		getColorIdForFolder(id) {
-			this.colorIDforFolder = id
+			storageTask.setTaskInStorage(this.task)
 		},
 
 		updateTitle(id, newTitle) {
 			this.title[id - 1].title = newTitle
-
-			// TODO: Why our store has access to storage by some magic key?
-			storage.setItem(STORAGE_TITLE_KEY, JSON.stringify(this.title))
-		},
-
-		// TODO: Move open/close logic to component
-		openWindowFolder() {
-			this.isModalWindowOpen = true
-		},
-
-		// TODO: Move open/close logic to component
-		closeWindowFolder() {
-			this.isModalWindowOpen = false
+			storageTitle.setTitleInStorage(this.title)
 		}
 	}
 })

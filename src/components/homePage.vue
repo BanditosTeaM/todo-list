@@ -5,27 +5,13 @@ export default {
 	setup() {
 		// TODO: Same with App.vue
 		const dataStore = useDataStore()
-		dataStore.fetchData()
-		dataStore.initializeTask()
 		return { dataStore }
 	},
-	data() {
-		return {
-			// TODO: Remove not used var
-			isModalWindowOpen: false
-		}
-	},
-	methods: {
-		// TODO: Delete it after integrate colors to title
-		getColorById(id) {
-			const colorObj = this.dataStore.color.find(color => color.id === id)
-			return colorObj ? colorObj.color : '#000'
-		},
 
-		getTaskById(id) {
-			// U have in store method for it
-			const tasksObj = this.dataStore.task.find(task => task.taskId === id)
-			return tasksObj ? tasksObj.task : ''
+	methods: {
+		checkVisibleTask(id) {
+			const visibleTask = this.dataStore.task.find(vTask => vTask.taskId === id)
+			return visibleTask ? visibleTask.taskId : ''
 		}
 	}
 }
@@ -33,15 +19,16 @@ export default {
 <template>
 	<div>
 		<div
-			v-for="title in dataStore.getTitleTasksWithInfoTasks"
+			v-for="title in dataStore.getTitlesWithTasks"
 			:key="title.id"
 			class="taskList"
 		>
-			<h1 :style="{ color: getColorById(title.colorId) }">
+			<h1 :style="{ color: title.color }">
 				{{ title.title }}
 			</h1>
+
 			<hr />
-			<div v-if="getTaskById(title.id)">
+			<div v-if="checkVisibleTask(title.id)">
 				<h2
 					v-for="task in title.tasks"
 					:key="task.id"
@@ -87,7 +74,7 @@ export default {
 .checkInput:checked + .checkBox {
 	background-color: #4dd599;
 	box-shadow: 0 0 0 1px #4dd599;
-	background-image: url(../assets/checkedTask.svg);
+	background-image: url(../assets/image/checkedTask.svg);
 }
 .checkInput:focus + .checkBox {
 	box-shadow: 0 0 0 1px black;

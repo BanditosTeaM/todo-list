@@ -11,35 +11,34 @@ export default {
 
 	setup() {
 		const dataStore = useDataStore()
-		// First fetchData and only after initialize?
-		// TODO: Create main `initialize` method for initialize store
-		dataStore.fetchData()
 		dataStore.initializeTitle()
+		dataStore.initializeTask()
+		dataStore.fetchData()
 		return { dataStore }
 	},
 
 	data() {
 		return {
 			activeTask: null,
-			show: false
+			show: false,
+			isModalWindowOpen: false
 		}
 	},
 
 	methods: {
-		getColorById(id) {
-			const colorObj = this.dataStore.color.find(color => color.id === id)
-			return colorObj ? colorObj.color : '#000'
-		},
-
-		// Its method do: delete folder and navigation to home
-		// TODO: Rename it to like onDeleteFolder or onDeleteTitle
-		navigationTo(id) {
+		onDeleteFolder(id) {
 			this.dataStore.deleteFolder(id)
 			this.$router.push('/')
 		},
 
 		toggleMenu() {
 			this.show = !this.show
+		},
+		openModalWindow() {
+			this.isModalWindowOpen = true
+		},
+		closeModalWindow() {
+			this.isModalWindowOpen = false
 		}
 	}
 }
@@ -51,8 +50,10 @@ export default {
 			class="showMenu"
 			@click="toggleMenu"
 		>
-			<!-- TODO: Change X to icon -->
-			X
+			<img
+				src="./assets/image/addFoldelPlus.svg"
+				alt="+"
+			/>
 		</span>
 		<div
 			class="menu"
@@ -63,7 +64,7 @@ export default {
 				class="allTask"
 			>
 				<img
-					src="./assets/allTask.svg"
+					src="./assets/image/allTask.svg"
 					alt=""
 				/>
 				Все задачи
@@ -72,7 +73,7 @@ export default {
 			<nav class="menuNav">
 				<ul>
 					<li
-						v-for="title in dataStore.title"
+						v-for="title in dataStore.getTitlesWithTasks"
 						:key="title.id"
 					>
 						<router-link
@@ -80,17 +81,16 @@ export default {
 							class="titleTask"
 						>
 							<div class="titleTaskInnerWrapper">
-								<!-- After intergate colors in title remove getColorById -->
-								<dotCircle :color="getColorById(title.colorId)" />
+								<dotCircle :color="title.color" />
 								{{ title.title }}
 							</div>
 						</router-link>
 						<button
 							class="deleteTask"
-							@click="navigationTo(title.id)"
+							@click="onDeleteFolder(title.id)"
 						>
 							<img
-								src="./assets/hoverClose.svg"
+								src="./assets/image/hoverClose.svg"
 								alt="X"
 							/>
 						</button>
@@ -99,14 +99,17 @@ export default {
 			</nav>
 			<a
 				class="openWindow"
-				@click="dataStore.openWindowFolder"
+				@click="openModalWindow()"
 			>
-				<!-- TODO: Change + to icon -->
-				+ Добавить папку
+				<img
+					src="./assets/image/addFoldelPlus.svg"
+					alt="+"
+				/>
+				Добавить папку
 			</a>
 			<modalWindow
-				v-if="dataStore.isModalWindowOpen"
-				@close="dataStore.closeWindowFolder"
+				v-if="isModalWindowOpen"
+				@close="closeModalWindow"
 			/>
 		</div>
 		<router-view class="infoTask"></router-view>
@@ -224,6 +227,7 @@ li:hover .deleteTask {
 }
 .showMenu {
 	position: absolute;
+	z-index: 1;
 	display: none;
 	background: none;
 	border: none;
@@ -248,6 +252,12 @@ a {
 	.showMenu {
 		display: block;
 	}
+	.showMenu img {
+		padding-top: 5px;
+		padding-left: 5px;
+		height: 15px;
+		width: 15px;
+	}
 
 	.menu {
 		display: none;
@@ -258,17 +268,14 @@ a {
 }
 @media (max-width: 425px) {
 	.menu {
-		width: 200px;
+		position: absolute;
+		min-width: 100%;
 	}
-
+	.menu-open + .infoTask {
+		display: none;
+	}
 	.allTask {
 		width: 150px;
-	}
-	.titleTask.router-link-active {
-		width: 150px;
-	}
-	.deleteTask {
-		margin-left: 140px;
 	}
 }
 </style>

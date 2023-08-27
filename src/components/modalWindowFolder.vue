@@ -12,6 +12,12 @@ export default {
 		dataStore.fetchData()
 		return { dataStore }
 	},
+	data() {
+		return {
+			inputValue: '',
+			colorIdFolder: ''
+		}
+	},
 	mounted() {
 		this.popupItem = this.$el
 		this.$el.focus()
@@ -19,6 +25,9 @@ export default {
 	methods: {
 		close() {
 			this.$emit('close')
+		},
+		getColorId(id) {
+			this.colorIdFolder = id
 		}
 	}
 }
@@ -33,14 +42,14 @@ export default {
 					@click="close"
 				>
 					<img
-						src="../assets/closeButton.svg"
+						src="../assets/image/closeButton.svg"
 						alt="X"
 					/>
 				</button>
 			</div>
 			<div>
 				<input
-					v-model="dataStore.inputFolder"
+					v-model="inputValue"
 					:maxlength="17"
 					class="InputFolder"
 					type="text"
@@ -61,12 +70,14 @@ export default {
 				<span
 					class="circle-span"
 					:style="{ backgroundColor: circle.color }"
-					@click="dataStore.getColorIdForFolder(circle.id)"
+					@click="getColorId(circle.id)"
 				></span>
 			</label>
 
 			<div class="buttonAddFolder">
-				<button @click="dataStore.addTitle()">Добавить</button>
+				<button @click="dataStore.addTitle(inputValue, colorIdFolder)">
+					Добавить
+				</button>
 			</div>
 		</div>
 	</div>
@@ -137,26 +148,5 @@ export default {
 }
 .buttonAddFolder button:active {
 	background-color: #256e4e;
-}
-@media (max-width: 425px) {
-	.modalWindow {
-		width: 142px;
-		height: 200px;
-	}
-	.buttonAddFolder button {
-		width: 100px;
-	}
-	.InputFolder {
-		width: 130px;
-		margin-left: 5px;
-		padding: 5px;
-	}
-	.circle-div {
-		margin-left: 5px;
-	}
-	.circle-span {
-		width: 25px;
-		height: 25px;
-	}
 }
 </style>

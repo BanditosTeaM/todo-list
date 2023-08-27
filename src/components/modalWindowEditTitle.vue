@@ -36,7 +36,7 @@ export default {
 					@click="close"
 				>
 					<img
-						src="../assets/closeButton.svg"
+						src="../assets/image/closeButton.svg"
 						alt="X"
 					/>
 				</button>

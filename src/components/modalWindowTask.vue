@@ -18,6 +18,11 @@ export default {
 		dataStore.fetchData()
 		return { dataStore }
 	},
+	data() {
+		return {
+			inputValue: ''
+		}
+	},
 	methods: {
 		close() {
 			this.$emit('close')
@@ -31,7 +36,7 @@ export default {
 		<div class="modalWindow">
 			<div>
 				<input
-					v-model="dataStore.inputTask"
+					v-model="inputValue"
 					:maxlength="100"
 					type="text"
 					placeholder="Текст задачи"
@@ -41,7 +46,7 @@ export default {
 			<div class="buttonsAddTask">
 				<button
 					class="addTask"
-					@click="dataStore.addTask(id)"
+					@click="dataStore.addTask(id, inputValue)"
 				>
 					Добавить задачу
 				</button>
