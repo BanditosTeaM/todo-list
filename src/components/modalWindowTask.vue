@@ -20,12 +20,22 @@ export default {
 	},
 	data() {
 		return {
-			inputValue: ''
+			inputValue: '',
+			error: false
 		}
 	},
 	methods: {
 		close() {
 			this.$emit('close')
+		},
+		checkInputOnError() {
+			if (this.inputValue.trim() === '') {
+				this.error = true
+			} else {
+				this.error = false
+				this.dataStore.addTask(this.inputValue, this.id)
+				this.close()
+			}
 		}
 	}
 }
@@ -41,12 +51,13 @@ export default {
 					type="text"
 					placeholder="Текст задачи"
 					class="inputAddTask"
+					@keyup.enter="checkInputOnError"
 				/>
 			</div>
 			<div class="buttonsAddTask">
 				<button
 					class="addTask"
-					@click="dataStore.addTask(id, inputValue)"
+					@click="checkInputOnError"
 				>
 					Добавить задачу
 				</button>
@@ -57,11 +68,20 @@ export default {
 					Отмена
 				</button>
 			</div>
+			<p
+				v-if="error"
+				class="error-message"
+			>
+				Ошибка: поле ввода пустое
+			</p>
 		</div>
 	</div>
 </template>
 
 <style scoped>
+.error-message {
+	color: red;
+}
 .inputAddTask {
 	width: 415px;
 	height: 38px;
@@ -70,6 +90,7 @@ export default {
 	border: 1px solid #efefef;
 	margin-top: 10px;
 	margin-bottom: 10px;
+	padding-left: 15px;
 	background: #fff;
 }
 .addTask {
@@ -80,6 +101,7 @@ export default {
 	border: 0;
 	margin-right: 10px;
 	background: #4dd599;
+	color: #fff;
 	cursor: pointer;
 }
 .cancelTask {
@@ -89,6 +111,8 @@ export default {
 	border-radius: 4px;
 	border: 0;
 	background: #f4f6f8;
+	color: #9c9c9c;
+
 	cursor: pointer;
 }
 .addTask:active {
@@ -96,5 +120,11 @@ export default {
 }
 .cancelTask:active {
 	background-color: #b4b4b4;
+}
+
+@media (max-width: 768px) {
+	.inputAddTask {
+		width: 250px;
+	}
 }
 </style>

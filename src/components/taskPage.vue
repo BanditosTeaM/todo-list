@@ -22,7 +22,8 @@ export default {
 	data() {
 		return {
 			isModalWindowTaskOpen: false,
-			isModalWindowEditTitleOpen: false
+			isModalWindowEditTitleOpen: false,
+			selectedTitle: ''
 		}
 	},
 	computed: {
@@ -35,6 +36,12 @@ export default {
 				vTask => vTask.taskId === this.numberedTaskId
 			)
 			return visibleTask ? visibleTask.taskId : ''
+		}
+	},
+	methods: {
+		selectTitle(title) {
+			this.isModalWindowEditTitleOpen = true
+			this.selectedTitle = title
 		}
 	}
 }
@@ -50,12 +57,15 @@ export default {
 				:key="color.id"
 				class="titlePart"
 			>
-				<h1 :style="{ color: color.color }">
+				<h2
+					class="title"
+					:style="{ color: color.color }"
+				>
 					{{ title.title }}
-				</h1>
+				</h2>
 				<button
 					class="editButton"
-					@click="isModalWindowEditTitleOpen = true"
+					@click="selectTitle(title.title)"
 				>
 					<img
 						src="../assets/image/editTitle.svg"
@@ -66,13 +76,15 @@ export default {
 			<modalWindowEditTitle
 				v-if="isModalWindowEditTitleOpen"
 				:id="numberedTaskId"
+				:seltitle="selectedTitle"
 				@close="isModalWindowEditTitleOpen = false"
 			/>
 			<hr />
 			<div v-if="checkVisibleTask">
-				<h2
+				<div
 					v-for="task in title.tasks"
 					:key="task.id"
+					class="taskPart"
 				>
 					<label class="check">
 						<input
@@ -91,17 +103,21 @@ export default {
 							/>
 						</button>
 					</label>
-				</h2>
+				</div>
 			</div>
 			<div v-else>
-				<h2>Мой голубчик, задач нету</h2>
+				<div class="taskPart">Мой голубчик, задач нету</div>
 			</div>
 
 			<a
 				class="addTask"
 				@click="isModalWindowTaskOpen = true"
 			>
-				+ Добавить задачу
+				<img
+					src="../assets/image/addFoldelPlus.svg"
+					alt="+"
+				/>
+				Добавить задачу
 			</a>
 			<modalWindowTask
 				v-if="isModalWindowTaskOpen"
@@ -121,6 +137,7 @@ export default {
 	font-family: 'Montserrat';
 	src: url('../assets/fonts/Montserrat-Regular.ttf') format('truetype');
 }
+
 .addTask {
 	color: #b4b4b4;
 	font-size: 20px;
@@ -129,7 +146,7 @@ export default {
 	line-height: normal;
 	letter-spacing: 0.15px;
 	cursor: pointer;
-	margin-top: 20px;
+	margin-top: -30px;
 }
 
 .deleteTask {
@@ -137,7 +154,7 @@ export default {
 	background-color: white;
 	border: 0;
 	cursor: pointer;
-	float: right;
+	margin-left: auto;
 	padding-top: 13px;
 }
 .deleteTask img {
@@ -148,7 +165,8 @@ export default {
 	opacity: 1;
 }
 .check {
-	display: block;
+	display: flex;
+	align-items: center;
 }
 .checkInput {
 	position: absolute;
@@ -175,7 +193,18 @@ export default {
 .titlePart:hover .editButton {
 	opacity: 1;
 }
-
+.titlePart {
+	display: inline-block;
+}
+.taskPart {
+	color: #000;
+	font-family: 'Lato', sans-serif;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: normal;
+	margin-bottom: 20px;
+}
 .editButton {
 	opacity: 0;
 	background-color: white;
@@ -183,23 +212,17 @@ export default {
 	cursor: pointer;
 	margin-left: 15px;
 }
-h1 {
+.title {
 	display: inline-block;
 	font-family: 'Montserrat', sans-serif;
 	font-size: 32px;
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;
+	margin-top: 15px;
+	margin-bottom: 0px;
 }
-h2 {
-	color: #000;
-	font-family: 'Lato', sans-serif;
-	font-size: 16px;
-	font-style: normal;
-	font-weight: 500;
-	line-height: normal;
-	margin-top: 40px;
-}
+
 hr {
 	width: 420px;
 	height: 1px;
@@ -207,7 +230,8 @@ hr {
 	border: 0;
 	background-color: #f2f2f2;
 	margin-top: 20px;
-	margin-bottom: 35px;
+	margin-bottom: 30px;
+	margin-left: 0;
 }
 @media (max-width: 768px) {
 	hr {

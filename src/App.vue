@@ -1,6 +1,6 @@
 <script>
 import modalWindow from './components/modalWindowFolder.vue'
-import dotCircle from './components/dotCircle.vue'
+import dotCircle from './components/dotcircle.vue'
 import { useDataStore } from './store'
 
 export default {
@@ -34,6 +34,9 @@ export default {
 		toggleMenu() {
 			this.show = !this.show
 		},
+		closeMenu() {
+			this.show = false
+		},
 		openModalWindow() {
 			this.isModalWindowOpen = true
 		},
@@ -51,10 +54,17 @@ export default {
 			@click="toggleMenu"
 		>
 			<img
-				src="./assets/image/addFoldelPlus.svg"
+				v-if="!show"
+				src="./assets/image/icons8-menu.svg"
 				alt="+"
 			/>
+			<img
+				v-else
+				src="./assets/image/addFoldelPlus.svg"
+				alt="-"
+			/>
 		</span>
+
 		<div
 			class="menu"
 			:class="{ 'menu-open': show }"
@@ -62,6 +72,7 @@ export default {
 			<router-link
 				to="/"
 				class="allTask"
+				@click="closeMenu"
 			>
 				<img
 					src="./assets/image/allTask.svg"
@@ -75,6 +86,7 @@ export default {
 					<li
 						v-for="title in dataStore.getTitlesWithTasks"
 						:key="title.id"
+						@click="closeMenu"
 					>
 						<router-link
 							:to="'/task-info/' + title.id"
@@ -117,14 +129,23 @@ export default {
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
 @font-face {
 	font-family: 'Lato';
 	src: url('./assets/fonts/Lato-Regular.ttf') format('truetype');
 }
+
 .allTask img {
 	width: 18px;
 	height: 18px;
 	flex-shrink: 0;
+}
+.allTask:hover,
+.titleTask:hover {
+	border-radius: 4px;
+	background: #cccccc;
+	box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.05);
 }
 .deleteTask {
 	opacity: 0;
@@ -133,7 +154,7 @@ export default {
 	cursor: pointer;
 	position: absolute;
 	margin-top: -30px;
-	margin-left: 195px;
+	margin-left: 190px;
 }
 .deleteTask img {
 	width: 10px;
@@ -153,6 +174,13 @@ export default {
 	display: flex;
 	align-items: center;
 	column-gap: 10px;
+	font-family: 'Roboto', sans-serif;
+	color: #000;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	letter-spacing: 0.15px;
 }
 li:hover .deleteTask {
 	opacity: 1;
@@ -193,13 +221,20 @@ li:hover .deleteTask {
 	flex-direction: row;
 }
 .allTask {
-	padding: 5px 10px;
-	width: 200px;
-	height: 35px;
 	display: flex;
 	align-items: center;
 	justify-content: start;
 	column-gap: 10px;
+	color: #000;
+	font-family: 'Roboto', sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	letter-spacing: 0.2px;
+	padding: 5px 10px;
+	width: 200px;
+	height: 35px;
 }
 
 .allTask.router-link-active {
@@ -223,7 +258,7 @@ li:hover .deleteTask {
 	letter-spacing: 0.15px;
 	width: 275px;
 	min-height: 100vh;
-	background-color: #f4f6f8; /* Ваш цвет фона */
+	background-color: #f4f6f8;
 }
 .showMenu {
 	position: absolute;
@@ -233,6 +268,12 @@ li:hover .deleteTask {
 	border: none;
 	cursor: pointer;
 	padding: 0;
+}
+.showMenu img {
+	height: 20px;
+	width: 20px;
+	padding-top: 10px;
+	padding-right: 10px;
 }
 
 ul {
@@ -251,12 +292,7 @@ a {
 @media (max-width: 768px) {
 	.showMenu {
 		display: block;
-	}
-	.showMenu img {
-		padding-top: 5px;
-		padding-left: 5px;
-		height: 15px;
-		width: 15px;
+		margin-left: 10px;
 	}
 
 	.menu {
@@ -268,14 +304,20 @@ a {
 }
 @media (max-width: 425px) {
 	.menu {
-		position: absolute;
-		min-width: 100%;
+		width: 100%;
+	}
+	.menu-open {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+	.showMenu {
+		top: 0;
+		right: 0;
 	}
 	.menu-open + .infoTask {
 		display: none;
-	}
-	.allTask {
-		width: 150px;
 	}
 }
 </style>

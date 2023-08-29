@@ -8,7 +8,6 @@ export const useDataStore = defineStore('data', {
 	state: () => ({
 		data: [],
 		title: [],
-		// TODO: Remove color and intergrate in title
 		color: [],
 		task: [],
 		colorIDforFolder: ''
@@ -93,9 +92,6 @@ export const useDataStore = defineStore('data', {
 		},
 
 		addTitle(inputValue, id) {
-			if (String(inputValue).length === 0 || inputValue === ' ') {
-				inputValue = variables.newTitle
-			}
 			if (id === '') {
 				id = this.color[5].id
 			}
@@ -109,24 +105,20 @@ export const useDataStore = defineStore('data', {
 			storageTitle.setTitleInStorage(this.title)
 		},
 
-		addTask(taskId, inputValue) {
-			var inputTask = inputValue
-			if (String(inputTask).length === 0 || inputTask === ' ') {
-				inputTask = variables.newTask
-			}
-
-			const maxId = Math.max(0, ...this.title.map(title => title.id))
+		addTask(inputValue, taskId) {
+			const maxId = Math.max(0, ...this.task.map(task => task.id))
 
 			this.task.push({
 				id: maxId + 1,
 				taskId: taskId,
-				task: inputTask
+				task: inputValue
 			})
 			storageTask.setTaskInStorage(this.task)
 		},
 
 		updateTitle(id, newTitle) {
-			this.title[id - 1].title = newTitle
+			const oldTitle = this.title.find(oldTitle => oldTitle.id === id)
+			oldTitle.title = newTitle
 			storageTitle.setTitleInStorage(this.title)
 		}
 	}

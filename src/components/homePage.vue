@@ -23,15 +23,19 @@ export default {
 			:key="title.id"
 			class="taskList"
 		>
-			<h1 :style="{ color: title.color }">
+			<h2
+				class="title"
+				:style="{ color: title.color }"
+			>
 				{{ title.title }}
-			</h1>
+			</h2>
 
 			<hr />
 			<div v-if="checkVisibleTask(title.id)">
-				<h2
+				<div
 					v-for="task in title.tasks"
 					:key="task.id"
+					class="taskPage"
 				>
 					<label>
 						<input
@@ -41,9 +45,14 @@ export default {
 						<span class="checkBox"></span>
 						{{ task.task }}
 					</label>
-				</h2>
+				</div>
 			</div>
-			<div v-else>Задач нету</div>
+			<div
+				v-else
+				class="taskPage"
+			>
+				Задач нету
+			</div>
 		</div>
 	</div>
 </template>
@@ -79,22 +88,23 @@ export default {
 .checkInput:focus + .checkBox {
 	box-shadow: 0 0 0 1px black;
 }
-h1 {
+.title {
 	font-family: 'Montserrat', sans-serif;
 	font-size: 32px;
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;
+	margin-top: 15px;
+	margin-bottom: 0px;
 }
-h2 {
-	display: block;
+.taskPage {
 	color: #000;
 	font-family: 'Lato', sans-serif;
 	font-size: 16px;
 	font-style: normal;
 	font-weight: 500;
 	line-height: normal;
-	margin-top: 40px;
+	margin-bottom: 20px;
 }
 hr {
 	width: 420px;
@@ -104,10 +114,11 @@ hr {
 	background-color: #f2f2f2;
 	margin-top: 20px;
 	margin-bottom: 35px;
+	margin-left: 0;
 }
 @media (max-width: 780px) {
 	hr {
-		width: 300px;
+		width: 280px;
 	}
 }
 @media (max-width: 425px) {

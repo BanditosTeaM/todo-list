@@ -15,7 +15,8 @@ export default {
 	data() {
 		return {
 			inputValue: '',
-			colorIdFolder: ''
+			colorIdFolder: '',
+			error: false
 		}
 	},
 	mounted() {
@@ -28,6 +29,15 @@ export default {
 		},
 		getColorId(id) {
 			this.colorIdFolder = id
+		},
+		checkInputOnError() {
+			if (this.inputValue.trim() === '') {
+				this.error = true
+			} else {
+				this.error = false
+				this.dataStore.addTitle(this.inputValue, this.colorIdFolder)
+				this.close()
+			}
 		}
 	}
 }
@@ -54,41 +64,53 @@ export default {
 					class="InputFolder"
 					type="text"
 					placeholder="Название папки"
+					@keyup.enter="checkInputOnError"
 				/>
 			</div>
-
-			<label
-				v-for="circle in dataStore.color"
-				:key="circle.id"
-				class="circle-div"
-			>
-				<input
-					class="circle-input"
-					type="radio"
-					name="circle-radio"
-				/>
-				<span
-					class="circle-span"
-					:style="{ backgroundColor: circle.color }"
-					@click="getColorId(circle.id)"
-				></span>
-			</label>
-
+			<div>
+				<label
+					v-for="circle in dataStore.color"
+					:key="circle.id"
+					class="circle-div"
+				>
+					<input
+						class="circle-input"
+						type="radio"
+						name="circle-radio"
+					/>
+					<span
+						class="circle-span"
+						:style="{ backgroundColor: circle.color }"
+						@click="getColorId(circle.id)"
+					></span>
+				</label>
+			</div>
 			<div class="buttonAddFolder">
-				<button @click="dataStore.addTitle(inputValue, colorIdFolder)">
-					Добавить
-				</button>
+				<button @click="checkInputOnError">Добавить</button>
 			</div>
+			<p
+				v-if="error"
+				class="error-message"
+			>
+				Ошибка: поле ввода пустое
+			</p>
 		</div>
 	</div>
 </template>
 
 <style scoped>
+.error-message {
+	color: red;
+	padding-left: 20px;
+}
+.circle-div:first-child {
+	padding-left: 13px;
+}
 .circle-div {
 	display: inline-block;
 	margin-top: 13px;
-	margin-left: 8.6px;
 }
+
 .circle-input {
 	position: absolute;
 	-webkit-appearance: none;
@@ -96,17 +118,20 @@ export default {
 }
 .circle-span {
 	display: inline-block;
+
 	height: 20px;
 	width: 20px;
 	border-radius: 20px;
 	cursor: pointer;
+	margin-left: 5px;
 }
 .circle-input:checked + .circle-span {
 	box-shadow: 0 0 0 2px #525252;
 }
 .modalWindow {
+	position: relative;
 	background-color: #ffffff;
-	height: 150px;
+	height: 160px;
 	width: 235px;
 	border-radius: 10px;
 	margin-top: 25px;
@@ -119,14 +144,19 @@ export default {
 	border-radius: 4px;
 	border: 1px solid #efefef;
 	box-sizing: border-box;
+	margin-top: 15px;
 	margin-left: 15px;
 	padding-left: 15px;
 	outline: none;
 }
 .buttonClose {
+	transform: translate(720%, -50%);
+	position: absolute;
+	top: 0;
+	left: 0;
 	display: block;
 	width: 30px;
-	height: 32;
+	height: 32px;
 	outline: none;
 	border: 0;
 	background: transparent;
@@ -138,6 +168,7 @@ export default {
 	text-align: center;
 }
 .buttonAddFolder button {
+	color: #fff;
 	background-color: #4dd599;
 	width: 200px;
 	height: 37px;

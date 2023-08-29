@@ -10,18 +10,31 @@ export default {
 		id: {
 			type: Number,
 			required: true
+		},
+		seltitle: {
+			type: String,
+			required: true
 		}
 	},
-
 	emits: ['close'],
 	setup() {
 		const dataStore = useDataStore()
 		dataStore.fetchData()
 		return { dataStore }
 	},
+	data() {
+		return {
+			newTitle: this.seltitle
+		}
+	},
+
 	methods: {
 		close() {
 			this.$emit('close')
+		},
+		updateTitle() {
+			this.dataStore.updateTitle(this.id, this.newTitle)
+			this.close()
 		}
 	}
 }
@@ -48,10 +61,11 @@ export default {
 					class="EditInput"
 					type="text"
 					placeholder="Новое название папки"
+					@keyup.enter="updateTitle"
 				/>
 			</div>
 			<div class="buttonEditTitle">
-				<button @click="dataStore.updateTitle(id, newTitle)">Изменить</button>
+				<button @click="updateTitle">Изменить</button>
 			</div>
 		</div>
 	</div>
@@ -76,9 +90,14 @@ export default {
 	box-sizing: border-box;
 	margin-left: 17px;
 	padding-left: 15px;
+	margin-top: 20px;
 	outline: none;
 }
 .buttonClose {
+	transform: translate(720%, -50%);
+	position: absolute;
+	top: 0;
+	left: 0;
 	display: block;
 	width: 30px;
 	outline: none;
@@ -93,6 +112,8 @@ export default {
 }
 .buttonEditTitle button {
 	background-color: #4dd599;
+	color: #fff;
+
 	width: 200px;
 	height: 33px;
 	border-radius: 4px;
