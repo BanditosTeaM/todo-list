@@ -24,7 +24,8 @@ export default {
 	},
 	data() {
 		return {
-			newTitle: this.seltitle
+			newTitle: this.seltitle,
+			error: false
 		}
 	},
 
@@ -35,6 +36,15 @@ export default {
 		updateTitle() {
 			this.dataStore.updateTitle(this.id, this.newTitle)
 			this.close()
+		},
+		checkInputOnError(value) {
+			if (value.trim() === '') {
+				this.error = true
+			} else {
+				this.error = false
+				this.updateTitle()
+				this.close()
+			}
 		}
 	}
 }
@@ -61,21 +71,32 @@ export default {
 					class="EditInput"
 					type="text"
 					placeholder="Новое название папки"
-					@keyup.enter="updateTitle"
+					@keyup.enter="checkInputOnError(newTitle)"
 				/>
 			</div>
+
 			<div class="buttonEditTitle">
-				<button @click="updateTitle">Изменить</button>
+				<button @click="checkInputOnError(newTitle)">Изменить</button>
 			</div>
+			<p
+				v-if="error"
+				class="error-message"
+			>
+				Ошибка: поле ввода пустое
+			</p>
 		</div>
 	</div>
 </template>
 
 <style scoped>
+.error-message {
+	color: red;
+	margin-left: 15px;
+}
 .modalWindow {
 	position: absolute;
 	background-color: #f4f6f8;
-	height: 120px;
+	height: 130px;
 	width: 235px;
 	border-radius: 10px;
 	margin-top: 10px;
