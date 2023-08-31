@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { getDatabaseData } from './api/getDatabaseOld'
 import storageTitle from './storage/adapters/title'
 import storageTask from './storage/adapters/task'
-import variables from './variables'
 
 export const useDataStore = defineStore('data', {
 	state: () => ({
@@ -111,7 +110,8 @@ export const useDataStore = defineStore('data', {
 			this.task.push({
 				id: maxId + 1,
 				taskId: taskId,
-				task: inputValue
+				task: inputValue,
+				doneTask: false
 			})
 			storageTask.setTaskInStorage(this.task)
 		},
@@ -120,6 +120,11 @@ export const useDataStore = defineStore('data', {
 			const oldTitle = this.title.find(oldTitle => oldTitle.id === id)
 			oldTitle.title = newTitle
 			storageTitle.setTitleInStorage(this.title)
+		},
+		updateDoneTask(id) {
+			const task = this.task.find(task => task.id === id)
+			task.doneTask = !task.doneTask
+			storageTask.setTaskInStorage(this.task)
 		}
 	}
 })

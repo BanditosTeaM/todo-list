@@ -41,8 +41,13 @@ export default {
 						<input
 							class="checkInput"
 							type="checkbox"
+							:checked="task.doneTask"
+							@change="dataStore.updateDoneTask(task.id)"
 						/>
-						<span class="checkBox"></span>
+						<span
+							class="checkBox"
+							@change="dataStore.updateDoneTask(task.id)"
+						></span>
 						{{ task.task }}
 					</label>
 				</div>

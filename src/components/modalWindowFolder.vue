@@ -106,6 +106,9 @@ export default {
 .circle-div:first-child {
 	padding-left: 13px;
 }
+.circle-div:first-child .circle-input:checked + .circle-span {
+	box-shadow: 0 0 0 2px #525252;
+}
 .circle-div {
 	display: inline-block;
 	margin-top: 13px;
