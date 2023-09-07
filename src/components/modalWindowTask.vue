@@ -36,6 +36,9 @@ export default {
 				this.dataStore.addTask(this.inputValue, this.id)
 				this.close()
 			}
+		},
+		clearError() {
+			this.error = false
 		}
 	}
 }
@@ -51,6 +54,8 @@ export default {
 					type="text"
 					placeholder="Текст задачи"
 					class="inputAddTask"
+					:class="{ 'error-message': error }"
+					@input="clearError"
 					@keyup.enter="checkInputOnError"
 				/>
 			</div>
@@ -68,12 +73,6 @@ export default {
 					Отмена
 				</button>
 			</div>
-			<p
-				v-if="error"
-				class="error-message"
-			>
-				Ошибка: поле ввода пустое
-			</p>
 		</div>
 	</div>
 </template>
@@ -92,6 +91,10 @@ export default {
 	margin-bottom: 10px;
 	padding-left: 15px;
 	background: #fff;
+	outline: none;
+}
+.error-message {
+	border: 1px solid red;
 }
 .addTask {
 	width: 145px;

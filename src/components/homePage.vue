@@ -78,6 +78,7 @@ export default {
 }
 .checkBox {
 	display: inline-block;
+	cursor: pointer;
 	height: 20px;
 	width: 20px;
 	box-shadow: 0 0 0 3px #e8e8e8;
@@ -99,8 +100,8 @@ export default {
 	font-style: normal;
 	font-weight: 700;
 	line-height: normal;
-	margin-top: 15px;
-	margin-bottom: 0px;
+	margin-top: 20px;
+	margin-bottom: -5px;
 }
 .taskPage {
 	color: #000;
@@ -109,7 +110,17 @@ export default {
 	font-style: normal;
 	font-weight: 500;
 	line-height: normal;
-	margin-bottom: 20px;
+	margin-bottom: 30px;
+}
+.taskPage:hover .checkBox {
+	box-shadow: 0 0 0 2px black;
+	z-index: 1;
+}
+
+label {
+	cursor: pointer;
+	display: flex;
+	align-items: center;
 }
 hr {
 	width: 420px;

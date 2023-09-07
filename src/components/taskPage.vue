@@ -16,7 +16,10 @@ export default {
 	},
 	setup() {
 		const dataStore = useDataStore()
-		return { dataStore }
+
+		return {
+			dataStore
+		}
 	},
 
 	data() {
@@ -36,6 +39,9 @@ export default {
 				vTask => vTask.taskId === this.numberedTaskId
 			)
 			return visibleTask ? visibleTask.taskId : ''
+		},
+		getObjectById() {
+			return this.dataStore.getAllById(this.numberedTaskId)
 		}
 	},
 	methods: {
@@ -48,88 +54,79 @@ export default {
 </script>
 <template>
 	<div>
-		<div
-			v-for="title in dataStore.getAllById(numberedTaskId)"
-			:key="title.id"
-		>
-			<div
-				v-for="color in title.colors"
-				:key="color.id"
-				class="titlePart"
+		<div class="titlePart">
+			<h2
+				class="title"
+				:style="{ color: getObjectById.color.color }"
 			>
-				<h2
-					class="title"
-					:style="{ color: color.color }"
-				>
-					{{ title.title }}
-				</h2>
-				<button
-					class="editButton"
-					@click="selectTitle(title.title)"
-				>
-					<img
-						src="../assets/image/editTitle.svg"
-						alt="EditSvg"
-					/>
-				</button>
-			</div>
-			<modalWindowEditTitle
-				v-if="isModalWindowEditTitleOpen"
-				:id="numberedTaskId"
-				:seltitle="selectedTitle"
-				@close="isModalWindowEditTitleOpen = false"
-			/>
-			<hr />
-			<div v-if="checkVisibleTask">
-				<div
-					v-for="task in title.tasks"
-					:key="task.id"
-					class="taskPart"
-				>
-					<label class="check">
-						<input
-							class="checkInput"
-							type="checkbox"
-							:checked="task.doneTask"
-							@change="dataStore.updateDoneTask(task.id)"
-						/>
-						<span
-							class="checkBox"
-							@change="dataStore.updateDoneTask(task.id)"
-						></span>
-						{{ task.task }}
-						<button
-							class="deleteTask"
-							@click="dataStore.deleteTask(task.id)"
-						>
-							<img
-								src="../assets/image/hoverClose.svg"
-								alt="X"
-							/>
-						</button>
-					</label>
-				</div>
-			</div>
-			<div v-else>
-				<div class="taskPart">Мой голубчик, задач нету</div>
-			</div>
-
-			<a
-				class="addTask"
-				@click="isModalWindowTaskOpen = true"
+				{{ getObjectById.title }}
+			</h2>
+			<button
+				class="editButton"
+				@click="selectTitle(getObjectById.title)"
 			>
 				<img
-					src="../assets/image/addFoldelPlus.svg"
-					alt="+"
+					src="../assets/image/editTitle.svg"
+					alt="EditSvg"
 				/>
-				Добавить задачу
-			</a>
-			<modalWindowTask
-				v-if="isModalWindowTaskOpen"
-				:id="numberedTaskId"
-				@close="isModalWindowTaskOpen = false"
-			/>
+			</button>
 		</div>
+		<modalWindowEditTitle
+			v-if="isModalWindowEditTitleOpen"
+			:id="numberedTaskId"
+			:seltitle="selectedTitle"
+			@close="isModalWindowEditTitleOpen = false"
+		/>
+		<hr />
+		<div v-if="getObjectById.tasks.length !== 0">
+			<div
+				v-for="task in getObjectById.tasks"
+				:key="task.id"
+				class="taskPart"
+			>
+				<label class="check">
+					<input
+						class="checkInput"
+						type="checkbox"
+						:checked="task.doneTask"
+						@change="dataStore.updateDoneTask(task.id)"
+					/>
+					<span
+						class="checkBox"
+						@change="dataStore.updateDoneTask(task.id)"
+					></span>
+					{{ task.task }}
+					<button
+						class="deleteTask"
+						@click="dataStore.deleteTask(task.id)"
+					>
+						<img
+							src="../assets/image/hoverClose.svg"
+							alt="X"
+						/>
+					</button>
+				</label>
+			</div>
+		</div>
+		<div v-else>
+			<div class="taskPart">Мой голубчик, задач нету</div>
+		</div>
+
+		<a
+			class="addTask"
+			@click="isModalWindowTaskOpen = true"
+		>
+			<img
+				src="../assets/image/addFoldelPlus.svg"
+				alt="+"
+			/>
+			Добавить задачу
+		</a>
+		<modalWindowTask
+			v-if="isModalWindowTaskOpen"
+			:id="numberedTaskId"
+			@close="isModalWindowTaskOpen = false"
+		/>
 	</div>
 </template>
 
@@ -156,11 +153,11 @@ export default {
 
 .deleteTask {
 	opacity: 0;
-	background-color: white;
+	background: transparent;
 	border: 0;
 	cursor: pointer;
 	margin-left: auto;
-	padding-top: 13px;
+	padding-top: 15px;
 }
 .deleteTask img {
 	height: 15px;
@@ -172,6 +169,7 @@ export default {
 .check {
 	display: flex;
 	align-items: center;
+	cursor: pointer;
 }
 .checkInput {
 	position: absolute;
@@ -180,6 +178,7 @@ export default {
 }
 .checkBox {
 	display: inline-block;
+	cursor: pointer;
 	height: 20px;
 	width: 20px;
 	box-shadow: 0 0 0 3px #e8e8e8;
@@ -187,6 +186,7 @@ export default {
 	background-color: white;
 	margin-right: 15px;
 }
+
 .checkInput:checked + .checkBox {
 	background-color: #4dd599;
 	box-shadow: 0 0 0 1px #4dd599;
@@ -198,6 +198,11 @@ export default {
 .titlePart:hover .editButton {
 	opacity: 1;
 }
+.check:hover .checkBox {
+	box-shadow: 0 0 0 2px black;
+	z-index: 1;
+}
+
 .titlePart {
 	display: inline-block;
 }

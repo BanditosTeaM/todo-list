@@ -33,18 +33,18 @@ export default {
 		close() {
 			this.$emit('close')
 		},
-		updateTitle() {
-			this.dataStore.updateTitle(this.id, this.newTitle)
-			this.close()
-		},
+
 		checkInputOnError(value) {
 			if (value.trim() === '') {
 				this.error = true
 			} else {
 				this.error = false
-				this.updateTitle()
+				this.dataStore.updateTitle(this.id, value)
 				this.close()
 			}
+		},
+		clearError() {
+			this.error = false
 		}
 	}
 }
@@ -69,8 +69,10 @@ export default {
 					v-model="newTitle"
 					:maxlength="20"
 					class="EditInput"
+					:class="{ 'error-message': error }"
 					type="text"
 					placeholder="Новое название папки"
+					@input="clearError"
 					@keyup.enter="checkInputOnError(newTitle)"
 				/>
 			</div>
@@ -78,21 +80,11 @@ export default {
 			<div class="buttonEditTitle">
 				<button @click="checkInputOnError(newTitle)">Изменить</button>
 			</div>
-			<p
-				v-if="error"
-				class="error-message"
-			>
-				Ошибка: поле ввода пустое
-			</p>
 		</div>
 	</div>
 </template>
 
 <style scoped>
-.error-message {
-	color: red;
-	margin-left: 15px;
-}
 .modalWindow {
 	position: absolute;
 	background-color: #f4f6f8;
@@ -113,6 +105,9 @@ export default {
 	padding-left: 15px;
 	margin-top: 20px;
 	outline: none;
+}
+.error-message {
+	border: 1px solid red;
 }
 .buttonClose {
 	transform: translate(720%, -50%);

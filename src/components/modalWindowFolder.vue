@@ -16,6 +16,7 @@ export default {
 		return {
 			inputValue: '',
 			colorIdFolder: '',
+			defaultColor: this.dataStore.color[0].id,
 			error: false
 		}
 	},
@@ -38,6 +39,9 @@ export default {
 				this.dataStore.addTitle(this.inputValue, this.colorIdFolder)
 				this.close()
 			}
+		},
+		clearError() {
+			this.error = false
 		}
 	}
 }
@@ -64,6 +68,8 @@ export default {
 					class="InputFolder"
 					type="text"
 					placeholder="Название папки"
+					:class="{ 'error-message': error }"
+					@input="clearError"
 					@keyup.enter="checkInputOnError"
 				/>
 			</div>
@@ -74,9 +80,11 @@ export default {
 					class="circle-div"
 				>
 					<input
+						v-model="defaultColor"
 						class="circle-input"
 						type="radio"
 						name="circle-radio"
+						:value="circle.id"
 					/>
 					<span
 						class="circle-span"
@@ -88,21 +96,11 @@ export default {
 			<div class="buttonAddFolder">
 				<button @click="checkInputOnError">Добавить</button>
 			</div>
-			<p
-				v-if="error"
-				class="error-message"
-			>
-				Ошибка: поле ввода пустое
-			</p>
 		</div>
 	</div>
 </template>
 
 <style scoped>
-.error-message {
-	color: red;
-	padding-left: 20px;
-}
 .circle-div:first-child {
 	padding-left: 13px;
 }
@@ -151,6 +149,9 @@ export default {
 	margin-left: 15px;
 	padding-left: 15px;
 	outline: none;
+}
+.error-message {
+	border: 1px solid red;
 }
 .buttonClose {
 	transform: translate(720%, -50%);

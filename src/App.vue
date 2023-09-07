@@ -1,6 +1,6 @@
 <script>
 import modalWindow from './components/modalWindowFolder.vue'
-import dotCircle from './components/dotcircle.vue'
+import dotCircle from './components/dotCircle.vue'
 import { useDataStore } from './store'
 
 export default {
@@ -98,7 +98,7 @@ export default {
 							</div>
 						</router-link>
 						<button
-							class="deleteTask"
+							class="deleteTitle"
 							@click="onDeleteFolder(title.id)"
 						>
 							<img
@@ -144,19 +144,25 @@ export default {
 .allTask:hover,
 .titleTask:hover {
 	border-radius: 4px;
+	background: #f8f6f4;
+	box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.05);
+}
+.deleteTitle:hover + .titleTask {
+	border-radius: 4px;
 	background: #cccccc;
 	box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.05);
 }
-.deleteTask {
+
+.deleteTitle {
 	opacity: 0;
 	background: transparent;
 	border: 0;
 	cursor: pointer;
 	position: absolute;
-	margin-top: -30px;
+	margin-top: -40px;
 	margin-left: 190px;
 }
-.deleteTask img {
+.deleteTitle img {
 	width: 10px;
 	height: 10px;
 	flex-shrink: 0;
@@ -164,6 +170,7 @@ export default {
 
 .titleTask {
 	padding: 5px 10px;
+	margin-bottom: 10px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -174,6 +181,7 @@ export default {
 	display: flex;
 	align-items: center;
 	column-gap: 10px;
+	margin-left: 6px;
 	font-family: 'Roboto', sans-serif;
 	color: #000;
 	font-size: 14px;
@@ -182,10 +190,10 @@ export default {
 	line-height: normal;
 	letter-spacing: 0.15px;
 }
-li:hover .deleteTask {
+li:hover .deleteTitle {
 	opacity: 1;
 }
-.titleTask.router-link-active + .deleteTask {
+.titleTask.router-link-active + .deleteTitle {
 	opacity: 1;
 }
 
@@ -210,6 +218,9 @@ li:hover .deleteTask {
 	letter-spacing: 0.15px;
 	cursor: pointer;
 }
+.openWindow img {
+	padding-right: 5px;
+}
 .openWindow:hover {
 	color: #767676;
 }
@@ -233,8 +244,8 @@ li:hover .deleteTask {
 	line-height: normal;
 	letter-spacing: 0.2px;
 	padding: 5px 10px;
-	width: 200px;
-	height: 35px;
+	width: 197px;
+	height: 37px;
 }
 
 .allTask.router-link-active {
@@ -246,7 +257,7 @@ li:hover .deleteTask {
 .allTask,
 .openWindow {
 	margin-top: 10px;
-	margin-left: 25px;
+	margin-left: 22px;
 }
 
 .menu {

@@ -13,21 +13,20 @@ export const useDataStore = defineStore('data', {
 	}),
 
 	getters: {
-		getAllById: state => {
-			return id =>
-				state.title
-					.filter(title => title.id === id)
-					.map(title => {
-						const tasks = state.task.filter(task => task.taskId === id)
-						const colors = state.color.filter(
-							color => color.id === title.colorId
-						)
-						return {
-							...title,
-							tasks,
-							colors
-						}
-					})
+		getAllById: state => id => {
+			const title = state.title.find(title => title.id === id)
+			if (!title) {
+				return null
+			}
+
+			const tasks = state.task.filter(task => task.taskId === id)
+			const color = state.color.find(color => color.id === title.colorId)
+
+			return {
+				...title,
+				tasks,
+				color
+			}
 		},
 
 		getTitlesWithTasks: state => {
@@ -91,8 +90,8 @@ export const useDataStore = defineStore('data', {
 		},
 
 		addTitle(inputValue, id) {
-			if (id === '') {
-				id = this.color[5].id
+			if (Number(id) === null) {
+				id = this.color[0].id
 			}
 			const maxId = Math.max(0, ...this.title.map(title => title.id))
 
