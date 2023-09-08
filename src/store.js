@@ -7,9 +7,7 @@ export const useDataStore = defineStore('data', {
 	state: () => ({
 		data: [],
 		title: [],
-		color: [],
-		task: [],
-		colorIDforFolder: ''
+		task: []
 	}),
 
 	getters: {
@@ -20,25 +18,20 @@ export const useDataStore = defineStore('data', {
 			}
 
 			const tasks = state.task.filter(task => task.taskId === id)
-			const color = state.color.find(color => color.id === title.colorId)
 
 			return {
 				...title,
-				tasks,
-				color
+				tasks
 			}
 		},
 
 		getTitlesWithTasks: state => {
 			return state.title.map(title => {
 				const tasks = state.task.filter(task => task.taskId === title.id)
-				const color =
-					state.color.find(color => color.id === title.colorId)?.color || '#000'
 
 				return {
 					...title,
-					tasks,
-					color
+					tasks
 				}
 			})
 		}
@@ -56,8 +49,6 @@ export const useDataStore = defineStore('data', {
 				if (this.task.length === 0) {
 					this.task = this.data.infoTask
 				}
-
-				this.color = this.data.titleColor
 			} catch (error) {
 				if (error.response.status === 500) {
 					console.error('Ошибка при загрузке данных с сервера:', error.message)
@@ -89,15 +80,12 @@ export const useDataStore = defineStore('data', {
 			storageTask.setTaskInStorage(this.task)
 		},
 
-		addTitle(inputValue, id) {
-			if (Number(id) === null) {
-				id = this.color[0].id
-			}
+		addTitle(inputValue, color) {
 			const maxId = Math.max(0, ...this.title.map(title => title.id))
 
 			this.title.push({
 				id: maxId + 1,
-				colorId: id,
+				color: color,
 				title: inputValue
 			})
 			storageTitle.setTitleInStorage(this.title)

@@ -57,7 +57,7 @@ export default {
 		<div class="titlePart">
 			<h2
 				class="title"
-				:style="{ color: getObjectById.color.color }"
+				:style="{ color: getObjectById.color }"
 			>
 				{{ getObjectById.title }}
 			</h2>

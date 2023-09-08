@@ -1,45 +1,54 @@
 <script>
 import { useDataStore } from '../store'
 import vClickOutside from 'click-outside-vue3'
+import defaultColors from '../assets/data/colors-default'
 
 export default {
 	directives: {
 		clickOutside: vClickOutside.directive
 	},
+
 	emits: ['close'],
+
 	setup() {
 		const dataStore = useDataStore()
 		dataStore.fetchData()
 		return { dataStore }
 	},
+
 	data() {
 		return {
 			inputValue: '',
-			colorIdFolder: '',
-			defaultColor: this.dataStore.color[0].id,
+			colors: [],
+			defaultColor: '',
 			error: false
 		}
 	},
+
 	mounted() {
+		this.colors = defaultColors
+		this.defaultColor = this.colors[0]
+
 		this.popupItem = this.$el
 		this.$el.focus()
 	},
+
 	methods: {
 		close() {
 			this.$emit('close')
 		},
-		getColorId(id) {
-			this.colorIdFolder = id
-		},
+
 		checkInputOnError() {
 			if (this.inputValue.trim() === '') {
 				this.error = true
-			} else {
-				this.error = false
-				this.dataStore.addTitle(this.inputValue, this.colorIdFolder)
-				this.close()
+				return
 			}
+
+			this.error = false
+			this.dataStore.addTitle(this.inputValue, this.defaultColor)
+			this.close()
 		},
+
 		clearError() {
 			this.error = false
 		}
@@ -75,8 +84,8 @@ export default {
 			</div>
 			<div>
 				<label
-					v-for="circle in dataStore.color"
-					:key="circle.id"
+					v-for="color in colors"
+					:key="color"
 					class="circle-div"
 				>
 					<input
@@ -84,12 +93,11 @@ export default {
 						class="circle-input"
 						type="radio"
 						name="circle-radio"
-						:value="circle.id"
+						:value="color"
 					/>
 					<span
 						class="circle-span"
-						:style="{ backgroundColor: circle.color }"
-						@click="getColorId(circle.id)"
+						:style="{ backgroundColor: color }"
 					></span>
 				</label>
 			</div>
