@@ -2,22 +2,22 @@
 	"titleTask": [
 		{
 			"id": 1,
-			"colorId": 1,
+			"color": "#42B883",
 			"title": "Покупки"
 		},
 		{
 			"id": 2,
-			"colorId": 2,
+			"color": "#64C4ED",
 			"title": "Фронтенд"
 		},
 		{
 			"id": 3,
-			"colorId": 3,
+			"color": "#FFBBCC",
 			"title": "Фильмы и сериалы"
 		},
 		{
 			"id": 4,
-			"colorId": 4,
+			"color": "#B6E6BD",
 			"title": "Книги"
 		}
 	],
@@ -60,41 +60,6 @@
 			"taskId": 5,
 			"task": "вторая книга",
 			"doneTask": false
-		}
-	],
-
-	"titleColor": [
-		{
-			"id": 1,
-			"color": "#42B883"
-		},
-		{
-			"id": 2,
-			"color": "#64C4ED"
-		},
-		{
-			"id": 3,
-			"color": "#FFBBCC"
-		},
-		{
-			"id": 4,
-			"color": "#B6E6BD"
-		},
-		{
-			"id": 5,
-			"color": "#C355F5"
-		},
-		{
-			"id": 6,
-			"color": "#09011A"
-		},
-		{
-			"id": 7,
-			"color": "#FF6464"
-		},
-		{
-			"id": 8,
-			"color": "#C9D1D3"
 		}
 	]
 }

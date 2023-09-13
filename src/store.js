@@ -2,43 +2,38 @@ import { defineStore } from 'pinia'
 import { getDatabaseData } from './api/getDatabaseOld'
 import storageTitle from './storage/adapters/title'
 import storageTask from './storage/adapters/task'
+import colorData from './api/colors'
 
 export const useDataStore = defineStore('data', {
 	state: () => ({
 		data: [],
 		title: [],
-		color: [],
-		task: [],
-		colorIDforFolder: ''
+		colors: colorData,
+		task: []
 	}),
 
 	getters: {
-		getAllById: state => id => {
+		getTitleById: state => id => {
 			const title = state.title.find(title => title.id === id)
 			if (!title) {
 				return null
 			}
 
 			const tasks = state.task.filter(task => task.taskId === id)
-			const color = state.color.find(color => color.id === title.colorId)
 
 			return {
 				...title,
-				tasks,
-				color
+				tasks
 			}
 		},
 
 		getTitlesWithTasks: state => {
 			return state.title.map(title => {
 				const tasks = state.task.filter(task => task.taskId === title.id)
-				const color =
-					state.color.find(color => color.id === title.colorId)?.color || '#000'
 
 				return {
 					...title,
-					tasks,
-					color
+					tasks
 				}
 			})
 		}
@@ -89,15 +84,12 @@ export const useDataStore = defineStore('data', {
 			storageTask.setTaskInStorage(this.task)
 		},
 
-		addTitle(inputValue, id) {
-			if (Number(id) === null) {
-				id = this.color[0].id
-			}
+		addTitle(inputValue, color) {
 			const maxId = Math.max(0, ...this.title.map(title => title.id))
 
 			this.title.push({
 				id: maxId + 1,
-				colorId: id,
+				color: color,
 				title: inputValue
 			})
 			storageTitle.setTitleInStorage(this.title)

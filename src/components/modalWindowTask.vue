@@ -24,6 +24,13 @@ export default {
 			error: false
 		}
 	},
+	mounted() {
+		document.addEventListener('keyup', event => {
+			if (event.key === 'Escape') {
+				this.close()
+			}
+		})
+	},
 	methods: {
 		close() {
 			this.$emit('close')
@@ -93,6 +100,12 @@ export default {
 	background: #fff;
 	outline: none;
 }
+.inputAddTask:hover {
+	border-radius: 4px;
+	border: 2px solid black;
+	padding-left: 14px;
+	margin-bottom: 8px;
+}
 .error-message {
 	border: 1px solid red;
 }
@@ -107,6 +120,9 @@ export default {
 	color: #fff;
 	cursor: pointer;
 }
+.addTask:hover {
+	background-color: #42bb87;
+}
 .cancelTask {
 	width: 90px;
 	height: 34px;
@@ -115,8 +131,10 @@ export default {
 	border: 0;
 	background: #f4f6f8;
 	color: #9c9c9c;
-
 	cursor: pointer;
+}
+.cancelTask:hover {
+	background-color: #e2dfdf;
 }
 .addTask:active {
 	background-color: #256e4e;
