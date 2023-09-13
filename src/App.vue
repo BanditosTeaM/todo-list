@@ -1,7 +1,7 @@
 <script>
 import modalWindow from './components/modalWindowFolder.vue'
 import dotCircle from './components/dotCircle.vue'
-import storageLink from './storage/adapters/link'
+import { mapStores } from 'pinia'
 import { useDataStore } from './store'
 
 export default {
@@ -10,41 +10,35 @@ export default {
 		dotCircle
 	},
 
-	setup() {
-		const dataStore = useDataStore()
-		dataStore.initializeTitle()
-		dataStore.initializeTask()
-		dataStore.fetchData()
-		return { dataStore }
-	},
-
 	data() {
 		return {
-			activeTask: null,
 			show: false,
 			isModalWindowOpen: false,
 			activeLink: null
 		}
 	},
+
+	computed: {
+		...mapStores(useDataStore)
+	},
+
 	mounted() {
-		const storageActiveLink = storageLink.getActiveLinkInStorage()
-		if (storageActiveLink) {
-			this.activeLink = JSON.parse(storageActiveLink)
-		}
+		this.dataStore.initializeTitle()
+		this.dataStore.initializeTask()
+		this.dataStore.fetchData()
 	},
 
 	methods: {
 		setActiveLink(link) {
 			this.activeLink = link
-			storageLink.setActiveLinkInStorage(link)
 		},
 		onDeleteFolder(id) {
-			if (id === this.activeLink) {
-				this.dataStore.deleteFolder(id)
-				storageLink.removeActiveLinkInStorage()
+			const paramId = this.$route?.params?.id
+
+			if (paramId && id === Number(paramId)) {
 				this.$router.push('/')
-				return
 			}
+
 			this.dataStore.deleteFolder(id)
 		},
 

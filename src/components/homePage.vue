@@ -1,13 +1,11 @@
 <script>
+import { mapStores } from 'pinia'
 import { useDataStore } from '../store'
 
 export default {
-	setup() {
-		// TODO: Same with App.vue
-		const dataStore = useDataStore()
-		return { dataStore }
+	computed: {
+		...mapStores(useDataStore)
 	},
-
 	methods: {
 		checkVisibleTask(id) {
 			const visibleTask = this.dataStore.task.find(vTask => vTask.taskId === id)
