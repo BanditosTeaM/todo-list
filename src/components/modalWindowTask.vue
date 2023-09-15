@@ -1,5 +1,6 @@
 <script>
 import { useDataStore } from '../store'
+import { mapStores } from 'pinia'
 import vClickOutside from 'click-outside-vue3'
 
 export default {
@@ -13,23 +14,23 @@ export default {
 		}
 	},
 	emits: ['close'],
-	setup() {
-		const dataStore = useDataStore()
-		dataStore.fetchData()
-		return { dataStore }
-	},
+
 	data() {
 		return {
 			inputValue: '',
 			error: false
 		}
 	},
+	computed: {
+		...mapStores(useDataStore)
+	},
 	mounted() {
-		document.addEventListener('keyup', event => {
-			if (event.key === 'Escape') {
-				this.close()
-			}
-		})
+		this.dataStore.fetchData(),
+			document.addEventListener('keyup', event => {
+				if (event.key === 'Escape') {
+					this.close()
+				}
+			})
 	},
 	methods: {
 		close() {

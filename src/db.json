@@ -48,18 +48,6 @@
 			"taskId": 4,
 			"task": "Биткоины",
 			"doneTask": false
-		},
-		{
-			"id": 5,
-			"taskId": 5,
-			"task": "книга",
-			"doneTask": false
-		},
-		{
-			"id": 6,
-			"taskId": 5,
-			"task": "вторая книга",
-			"doneTask": false
 		}
 	]
 }
