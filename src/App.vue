@@ -30,6 +30,9 @@ export default {
 	},
 
 	mounted() {
+		fetch('http://localhost:3001/')
+			.then(response => response.json())
+			.then(data => console.log(data))
 		this.dataStore.initializeTitle()
 		this.dataStore.initializeTask()
 		this.dataStore.fetchData()

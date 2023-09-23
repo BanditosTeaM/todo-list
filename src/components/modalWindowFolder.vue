@@ -3,6 +3,7 @@ import { useDataStore } from '../store'
 import { mapStores } from 'pinia'
 import closeWindowIcon from '../assets/image/closeButton.svg'
 import vClickOutside from 'click-outside-vue3'
+import colors from '../api/colors'
 
 export default {
 	components: {
@@ -17,7 +18,7 @@ export default {
 		return {
 			inputValue: '',
 			colorFolder: '',
-			defaultColor: this.dataStore.colors[0],
+			defaultColor: colors[0],
 			error: false
 		}
 	},
@@ -83,7 +84,7 @@ export default {
 			</div>
 			<div>
 				<label
-					v-for="color in dataStore.colors"
+					v-for="color in colors"
 					:key="color"
 					class="circle-div"
 				>

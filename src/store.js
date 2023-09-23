@@ -2,13 +2,11 @@ import { defineStore } from 'pinia'
 import { getDatabaseData } from './api/getDatabaseOld'
 import storageTitle from './storage/adapters/title'
 import storageTask from './storage/adapters/task'
-import colorData from './api/colors'
 
 export const useDataStore = defineStore('data', {
 	state: () => ({
 		data: [],
 		title: [],
-		colors: colorData,
 		task: []
 	}),
 
