@@ -16,9 +16,10 @@ export default {
 
 	data() {
 		return {
+			colors: [],
 			inputValue: '',
 			colorFolder: '',
-			defaultColor: colors[0],
+			defaultColor: '#000',
 			error: false
 		}
 	},
@@ -28,7 +29,11 @@ export default {
 	mounted() {
 		this.dataStore.fetchData()
 
+		this.colors = colors
+		this.defaultColor = colors[0]
+
 		this.popupItem = this.$el
+
 		this.$el.focus()
 		document.addEventListener('keyup', event => {
 			if (event.key === 'Escape') {
