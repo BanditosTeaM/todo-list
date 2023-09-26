@@ -35,6 +35,7 @@ export default {
 		this.popupItem = this.$el
 
 		this.$el.focus()
+
 		document.addEventListener('keyup', event => {
 			if (event.key === 'Escape') {
 				this.close()
@@ -53,7 +54,8 @@ export default {
 				this.error = true
 			} else {
 				this.error = false
-				this.dataStore.addTitle(this.inputValue, this.defaultColor)
+				this.dataStore.addFolder(this.inputValue, this.defaultColor)
+
 				this.close()
 			}
 		},

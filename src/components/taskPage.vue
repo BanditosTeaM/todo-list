@@ -1,7 +1,8 @@
 <script>
 import modalWindowTask from './modalWindowTask.vue'
-import modalWindowEditTitle from './modalWindowEditTitle.vue'
-import editWindowIcon from '../assets/image/editTitle.svg'
+import modalWindowEditTask from './modalWindowEditTask.vue'
+import modalWindowEditFolder from './modalWindowEditFolder.vue'
+import editWindowIcon from '../assets/image/editFolder.svg'
 import deleteTaskIcon from '../assets/image/hoverClose.svg'
 import addFolderIcon from '../assets/image/addFoldelPlus.svg'
 import { mapStores } from 'pinia'
@@ -10,7 +11,8 @@ import { useDataStore } from '../store'
 export default {
 	components: {
 		modalWindowTask,
-		modalWindowEditTitle,
+		modalWindowEditTask,
+		modalWindowEditFolder,
 		editWindowIcon,
 		deleteTaskIcon,
 		addFolderIcon
@@ -26,15 +28,17 @@ export default {
 	data() {
 		return {
 			isModalWindowTaskOpen: false,
-			isModalWindowEditTitleOpen: false,
-			selectedTitle: ''
+			isModalWindowEditFolderOpen: false,
+			isModalWindowEditTask: false,
+			selectedTask: '',
+			selectedFolder: ''
 		}
 	},
 
 	computed: {
 		...mapStores(useDataStore),
 		numberedTaskId() {
-			return Number(this.id)
+			return this.id
 		},
 
 		checkVisibleTask() {
@@ -44,13 +48,17 @@ export default {
 			return visibleTask ? visibleTask.taskId : ''
 		},
 		getObjectById() {
-			return this.dataStore.getTitleById(this.numberedTaskId)
+			return this.dataStore.getFolderById(this.numberedTaskId)
 		}
 	},
 	methods: {
-		selectTitle(title) {
-			this.isModalWindowEditTitleOpen = true
-			this.selectedTitle = title
+		selectTitleFolder(folder) {
+			this.isModalWindowEditFolderOpen = true
+			this.selectedFolder = folder
+		},
+		selectTask(task) {
+			this.isModalWindowEditTask = true
+			this.selectedTask = task
 		},
 		close() {
 			this.$emit('close')
@@ -60,52 +68,65 @@ export default {
 </script>
 <template>
 	<div>
-		<div class="titlePart">
+		<div class="folderPart">
 			<h2
-				class="title"
-				:style="{ color: getObjectById.color }"
+				class="folder"
+				:style="{ color: getObjectById ? getObjectById.color : 'black' }"
 			>
-				{{ getObjectById.title }}
+				{{ getObjectById ? getObjectById.name : 'Новая папка' }}
 			</h2>
 			<button
 				class="editButton"
-				@click="selectTitle(getObjectById.title)"
+				@click="selectTitleFolder(getObjectById.name)"
 			>
 				<editWindowIcon />
 			</button>
 		</div>
-		<modalWindowEditTitle
-			v-if="isModalWindowEditTitleOpen"
+		<modalWindowEditFolder
+			v-if="isModalWindowEditFolderOpen"
 			:id="numberedTaskId"
-			:seltitle="selectedTitle"
-			@close="isModalWindowEditTitleOpen = false"
+			:selfolder="selectedFolder"
+			@close="isModalWindowEditFolderOpen = false"
 		/>
 		<hr />
 		<div v-if="getObjectById.tasks.length !== 0">
 			<div
 				v-for="task in getObjectById.tasks"
-				:key="task.id"
+				:key="task._id"
 				class="taskPart"
 			>
 				<label class="check">
 					<input
 						class="checkInput"
 						type="checkbox"
-						:checked="task.doneTask"
-						@change="dataStore.updateDoneTask(task.id)"
+						:checked="task.done"
+						@change="dataStore.updateDoneTask(task._id)"
 					/>
 					<span
 						class="checkBox"
-						@change="dataStore.updateDoneTask(task.id)"
+						@change="dataStore.updateDoneTask(task._id)"
 					></span>
-					{{ task.task }}
+					{{ task.text }}
+					<button
+						class="editButton"
+						@click="selectTask(task.text)"
+					>
+						<editWindowIcon />
+					</button>
+
 					<button
 						class="deleteTask"
-						@click="dataStore.deleteTask(task.id)"
+						@click="dataStore.deleteTask(task._id)"
 					>
 						<deleteTaskIcon />
 					</button>
 				</label>
+				<modalWindowEditTask
+					v-if="isModalWindowEditTask"
+					:id="task._id"
+					:seltask="selectedTask"
+					@close="isModalWindowEditTask = false"
+				/>
 			</div>
 		</div>
 		<div v-else>
@@ -153,6 +174,13 @@ export default {
 	background: transparent;
 	border: 0;
 	cursor: pointer;
+	padding-top: 15px;
+}
+.editButton {
+	opacity: 0;
+	background-color: white;
+	border: 0;
+	cursor: pointer;
 	margin-left: auto;
 	padding-top: 15px;
 }
@@ -165,6 +193,9 @@ export default {
 	height: 15px;
 }
 .check:hover .deleteTask {
+	opacity: 1;
+}
+.check:hover .editButton {
 	opacity: 1;
 }
 .check {
@@ -196,7 +227,7 @@ export default {
 .checkInput:focus + .checkBox {
 	box-shadow: 0 0 0 2px black;
 }
-.titlePart:hover .editButton {
+.folderPart:hover .editButton {
 	opacity: 1;
 }
 .check:hover .checkBox {
@@ -204,7 +235,7 @@ export default {
 	z-index: 1;
 }
 
-.titlePart {
+.folderPart {
 	display: inline-block;
 }
 .taskPart {
@@ -216,17 +247,11 @@ export default {
 	line-height: normal;
 	margin-bottom: 20px;
 }
-.editButton {
-	opacity: 0;
-	background-color: white;
-	border: 0;
-	cursor: pointer;
-	margin-left: 15px;
-}
+
 .editButton:focus-visible {
 	outline: none;
 }
-.title {
+.folder {
 	display: inline-block;
 	font-family: 'Montserrat', sans-serif;
 	font-size: 32px;
