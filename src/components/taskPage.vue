@@ -31,6 +31,7 @@ export default {
 			isModalWindowEditFolderOpen: false,
 			isModalWindowEditTask: false,
 			selectedTask: '',
+			taskID: '',
 			selectedFolder: ''
 		}
 	},
@@ -56,9 +57,10 @@ export default {
 			this.isModalWindowEditFolderOpen = true
 			this.selectedFolder = folder
 		},
-		selectTask(task) {
-			this.isModalWindowEditTask = true
+		getTask(task, id) {
 			this.selectedTask = task
+			this.taskID = id
+			this.isModalWindowEditTask = true
 		},
 		close() {
 			this.$emit('close')
@@ -85,7 +87,7 @@ export default {
 		<modalWindowEditFolder
 			v-if="isModalWindowEditFolderOpen"
 			:id="numberedTaskId"
-			:selfolder="selectedFolder"
+			:select-folder="selectedFolder"
 			@close="isModalWindowEditFolderOpen = false"
 		/>
 		<hr />
@@ -109,7 +111,7 @@ export default {
 					{{ task.text }}
 					<button
 						class="editButton"
-						@click="selectTask(task.text)"
+						@click="getTask(task.text, task._id)"
 					>
 						<editWindowIcon />
 					</button>
@@ -121,13 +123,13 @@ export default {
 						<deleteTaskIcon />
 					</button>
 				</label>
-				<modalWindowEditTask
-					v-if="isModalWindowEditTask"
-					:id="task._id"
-					:seltask="selectedTask"
-					@close="isModalWindowEditTask = false"
-				/>
 			</div>
+			<modalWindowEditTask
+				v-if="isModalWindowEditTask"
+				:id="taskID"
+				:select-task="selectedTask"
+				@close="isModalWindowEditTask = false"
+			/>
 		</div>
 		<div v-else>
 			<div class="taskPart">Мой голубчик, задач нету</div>

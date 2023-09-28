@@ -16,7 +16,7 @@ export default {
 			type: String,
 			required: true
 		},
-		seltask: {
+		selectTask: {
 			type: String,
 			required: true
 		}
@@ -25,7 +25,7 @@ export default {
 
 	data() {
 		return {
-			newTask: this.seltask,
+			newTask: this.selectTask,
 			error: false
 		}
 	},
@@ -41,19 +41,32 @@ export default {
 			}
 		})
 	},
+	unmounted() {
+		document.addEventListener('keyup', event => {
+			if (event.key === 'Escape') {
+				this.close()
+			}
+		})
+	},
 	methods: {
 		close() {
 			this.$emit('close')
 		},
-
+		handleKeyUp(event) {
+			if (event.key === 'Escape') {
+				this.close()
+			} else if (event.key === 'Enter') {
+				event.preventDefault()
+				this.checkInputOnError(this.newTask)
+			}
+		},
 		checkInputOnError(value) {
 			if (value.trim() === '') {
 				this.error = true
-			} else {
-				this.error = false
-				this.dataStore.updateTask(this.id, value)
-				this.close()
 			}
+			this.error = false
+			this.dataStore.updateTask(this.id, value)
+			this.close()
 		},
 		clearError() {
 			this.error = false
@@ -64,35 +77,36 @@ export default {
 
 <template>
 	<div v-click-outside="close">
-		<div
-			class="modalWindow"
-			@keyup.esc="close"
+		<form
+			method="POST"
+			@keyup="handleKeyUp"
 		>
-			<div class="divButtonClose">
-				<button
-					class="buttonClose"
-					@click="close"
-				>
-					<closeWindowIcon />
-				</button>
-			</div>
-			<div>
-				<input
-					v-model="newTask"
-					:maxlength="100"
-					class="EditInput"
-					:class="{ 'error-message': error }"
-					type="text"
-					placeholder="Новое название задачи"
-					@input="clearError"
-					@keyup.enter="checkInputOnError(newTask)"
-				/>
-			</div>
+			<div class="modalWindow">
+				<div class="divButtonClose">
+					<button
+						class="buttonClose"
+						@click="close"
+					>
+						<closeWindowIcon />
+					</button>
+				</div>
+				<div>
+					<input
+						v-model="newTask"
+						:maxlength="100"
+						class="EditInput"
+						:class="{ 'error-message': error }"
+						type="text"
+						placeholder="Новое название задачи"
+						@input="clearError"
+					/>
+				</div>
 
-			<div class="buttonEditfolder">
-				<button @click="checkInputOnError(newTask)">Изменить</button>
+				<div class="buttonEditfolder">
+					<button @click="checkInputOnError(newTask)">Изменить</button>
+				</div>
 			</div>
-		</div>
+		</form>
 	</div>
 </template>
 

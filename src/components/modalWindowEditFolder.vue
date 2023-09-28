@@ -17,7 +17,7 @@ export default {
 			type: String,
 			required: true
 		},
-		selfolder: {
+		selectFolder: {
 			type: String,
 			required: true
 		}
@@ -26,7 +26,7 @@ export default {
 
 	data() {
 		return {
-			newFolder: this.selfolder,
+			newFolder: this.selectFolder,
 			colors: [],
 			colorFolder: '',
 			defaultColor: '#000',
@@ -49,6 +49,13 @@ export default {
 			}
 		})
 	},
+	unmounted() {
+		document.addEventListener('keyup', event => {
+			if (event.key === 'Escape') {
+				this.close()
+			}
+		})
+	},
 	methods: {
 		close() {
 			this.$emit('close')
@@ -57,11 +64,10 @@ export default {
 		checkInputOnError(value) {
 			if (value.trim() === '') {
 				this.error = true
-			} else {
-				this.error = false
-				this.dataStore.updateFolder(this.id, value, this.defaultColor)
-				this.close()
 			}
+			this.error = false
+			this.dataStore.updateFolder(this.id, value, this.defaultColor)
+			this.close()
 		},
 		clearError() {
 			this.error = false
