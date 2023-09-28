@@ -4,21 +4,21 @@ import storageTask from './storage/adapters/task'
 
 export const useDataStore = defineStore('data', {
 	state: () => ({
-		folder: [],
-		task: []
+		folders: [],
+		tasks: []
 	}),
 
 	getters: {
 		getFolderById: state => id => {
-			if (!state.folder && !Array.isArray(state.folder)) {
-				return []
+			if (!state.folders && !Array.isArray(state.folders)) {
+				return null
 			}
-			const folder = state.folder.find(folder => folder._id === id)
+			const folder = state.folders.find(folder => folder._id === id)
 			if (!folder) {
 				return null
 			}
 
-			const tasks = state.task.filter(task => task.folderID === id)
+			const tasks = state.tasks.filter(task => task.folderID === id)
 
 			return {
 				...folder,
@@ -27,11 +27,11 @@ export const useDataStore = defineStore('data', {
 		},
 
 		getFoldersWithTasks: state => {
-			if (!state.folder && !Array.isArray(state.folder)) {
+			if (!state.folders && !Array.isArray(state.folders)) {
 				return []
 			}
-			return state.folder.map(folder => {
-				const tasks = state.task.filter(task => task.folderID === folder._id)
+			return state.folders.map(folder => {
+				const tasks = state.tasks.filter(task => task.folderID === folder._id)
 				return {
 					...folder,
 					tasks
@@ -43,14 +43,14 @@ export const useDataStore = defineStore('data', {
 	actions: {
 		async fetchData() {
 			try {
-				if (this.folder.length === 0) {
-					this.folder = await fetch('http://localhost:3001/api/folder/').then(
+				if (this.folders.length === 0) {
+					this.folders = await fetch('http://localhost:3001/folder/').then(
 						response => response.json()
 					)
 				}
 
-				if (this.task.length === 0) {
-					this.task = await fetch('http://localhost:3001/api/task/').then(
+				if (this.tasks.length === 0) {
+					this.tasks = await fetch('http://localhost:3001/task/').then(
 						response => response.json()
 					)
 				}
@@ -65,30 +65,30 @@ export const useDataStore = defineStore('data', {
 		initializeFolder() {
 			const jsonfolders = JSON.parse(storageFolder.getFolderInStorage())
 			if (!jsonfolders) return
-			this.folder = jsonfolders
+			this.folders = jsonfolders
 		},
 
 		initializeTask() {
 			const jsonTasks = JSON.parse(storageTask.getTaskInStorage())
 			if (!jsonTasks) return
 
-			this.task = jsonTasks
+			this.tasks = jsonTasks
 		},
 
 		deleteFolder(id) {
-			fetch(`http://localhost:3001/api/folder/${id}`, {
+			fetch(`http://localhost:3001/folder/${id}`, {
 				method: 'DELETE'
 			})
-			this.folder = this.folder.filter(folder => folder._id !== id)
-			storageFolder.setFolderInStorage(this.folder)
+			this.folders = this.folders.filter(folder => folder._id !== id)
+			storageFolder.setFolderInStorage(this.folders)
 		},
 
 		deleteTask(id) {
-			fetch(`http://localhost:3001/api/task/${id}`, {
+			fetch(`http://localhost:3001/task/${id}`, {
 				method: 'DELETE'
 			})
-			this.task = this.task.filter(task => task._id !== id)
-			storageTask.setTaskInStorage(this.task)
+			this.task = this.tasks.filter(task => task._id !== id)
+			storageTask.setTaskInStorage(this.tasks)
 		},
 
 		addFolder(inputValue, color) {
@@ -97,7 +97,7 @@ export const useDataStore = defineStore('data', {
 				color: color
 			}
 
-			fetch('http://localhost:3001/api/folder/', {
+			fetch('http://localhost:3001/folder/', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -106,12 +106,12 @@ export const useDataStore = defineStore('data', {
 			})
 				.then(response => response.json())
 				.then(data => {
-					this.folder.push({
+					this.folders.push({
 						_id: data._id,
 						color: data.color,
 						name: data.name
 					})
-					storageFolder.setFolderInStorage(this.folder)
+					storageFolder.setFolderInStorage(this.folders)
 				})
 		},
 
@@ -121,7 +121,7 @@ export const useDataStore = defineStore('data', {
 				text: inputValue
 			}
 
-			fetch('http://localhost:3001/api/task/', {
+			fetch('http://localhost:3001/task/', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -130,18 +130,18 @@ export const useDataStore = defineStore('data', {
 			})
 				.then(response => response.json())
 				.then(data => {
-					this.task.push({
+					this.tasks.push({
 						_id: data._id,
 						folderID: data.folderID,
 						text: data.text,
 						done: data.done
 					})
-					storageTask.setTaskInStorage(this.task)
+					storageTask.setTaskInStorage(this.tasks)
 				})
 		},
 
 		updateFolder(id, newFolder, newColor) {
-			const oldFolder = this.folder.find(oldFolder => oldFolder._id === id)
+			const oldFolder = this.folders.find(oldFolder => oldFolder._id === id)
 			oldFolder.name = newFolder
 			oldFolder.color = newColor
 
@@ -150,7 +150,7 @@ export const useDataStore = defineStore('data', {
 				color: oldFolder.color
 			}
 
-			fetch(`http://localhost:3001/api/folder/${id}`, {
+			fetch(`http://localhost:3001/folder/${id}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
@@ -158,35 +158,35 @@ export const useDataStore = defineStore('data', {
 				body: JSON.stringify(putFolder)
 			}).then(response => response.json())
 
-			storageFolder.setFolderInStorage(this.folder)
+			storageFolder.setFolderInStorage(this.folders)
 		},
 
 		updateTask(id, newTask) {
-			const oldTask = this.task.find(oldTask => oldTask._id === id)
+			const oldTask = this.tasks.find(oldTask => oldTask._id === id)
 			oldTask.text = newTask
 			const putTask = {
 				text: oldTask.text
 			}
 
-			fetch(`http://localhost:3001/api/task/${id}`, {
+			fetch(`http://localhost:3001/task/${id}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify(putTask)
 			}).then(response => response.json())
-			storageTask.setTaskInStorage(this.task)
+			storageTask.setTaskInStorage(this.tasks)
 		},
 
 		updateDoneTask(id) {
-			const task = this.task.find(task => task._id === id)
+			const task = this.tasks.find(task => task._id === id)
 			task.done = !task.done
 
 			const putTask = {
 				done: task.done
 			}
 
-			fetch(`http://localhost:3001/api/task/${id}`, {
+			fetch(`http://localhost:3001/task/${id}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
@@ -194,7 +194,7 @@ export const useDataStore = defineStore('data', {
 				body: JSON.stringify(putTask)
 			}).then(response => response.json())
 
-			storageTask.setTaskInStorage(this.task)
+			storageTask.setTaskInStorage(this.tasks)
 		}
 	}
 })
