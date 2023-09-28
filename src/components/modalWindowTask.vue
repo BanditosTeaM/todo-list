@@ -32,6 +32,13 @@ export default {
 				}
 			})
 	},
+	unmounted() {
+		document.addEventListener('keyup', event => {
+			if (event.key === 'Escape') {
+				this.close()
+			}
+		})
+	},
 	methods: {
 		close() {
 			this.$emit('close')
@@ -39,11 +46,10 @@ export default {
 		checkInputOnError() {
 			if (this.inputValue.trim() === '') {
 				this.error = true
-			} else {
-				this.error = false
-				this.dataStore.addTask(this.inputValue, this.id)
-				this.close()
 			}
+			this.error = false
+			this.dataStore.addTask(this.inputValue, this.id)
+			this.close()
 		},
 		clearError() {
 			this.error = false
