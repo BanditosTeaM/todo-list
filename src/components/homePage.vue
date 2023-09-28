@@ -8,7 +8,7 @@ export default {
 	},
 	methods: {
 		checkVisibleTask(id) {
-			const visibleTask = this.dataStore.task.find(
+			const visibleTask = this.dataStore.tasks.find(
 				vTask => vTask.folderID === id
 			)
 			return visibleTask ? visibleTask.folderID : ''
