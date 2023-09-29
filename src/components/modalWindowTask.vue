@@ -9,7 +9,7 @@ export default {
 	},
 	props: {
 		id: {
-			type: Number,
+			type: String,
 			required: true
 		}
 	},
@@ -25,25 +25,29 @@ export default {
 		...mapStores(useDataStore)
 	},
 	mounted() {
-		this.dataStore.fetchData(),
-			document.addEventListener('keyup', event => {
-				if (event.key === 'Escape') {
-					this.close()
-				}
-			})
+		this.dataStore.fetchData()
+
+		document.addEventListener('keyup', this.onKeyUp)
+	},
+	unmounted() {
+		document.removeEventListener('keyup', this.onKeyUp)
 	},
 	methods: {
+		onKeyUp(event) {
+			if (event.key === 'Escape') {
+				this.close()
+			}
+		},
 		close() {
 			this.$emit('close')
 		},
-		checkInputOnError() {
+		handlPrevent() {
 			if (this.inputValue.trim() === '') {
-				this.error = true
-			} else {
-				this.error = false
-				this.dataStore.addTask(this.inputValue, this.id)
-				this.close()
+				return (this.error = true)
 			}
+			this.error = false
+			this.dataStore.addTask(this.inputValue, this.id)
+			this.close()
 		},
 		clearError() {
 			this.error = false
@@ -54,34 +58,35 @@ export default {
 
 <template>
 	<div v-click-outside="close">
-		<div class="modalWindow">
-			<div>
-				<input
-					v-model="inputValue"
-					:maxlength="100"
-					type="text"
-					placeholder="Текст задачи"
-					class="inputAddTask"
-					:class="{ 'error-message': error }"
-					@input="clearError"
-					@keyup.enter="checkInputOnError"
-				/>
-			</div>
+		<form
+			class="modalWindow"
+			@submit.prevent="handlPrevent"
+		>
+			<input
+				v-model="inputValue"
+				:maxlength="100"
+				type="text"
+				placeholder="Текст задачи"
+				class="inputAddTask"
+				:class="{ 'error-message': error }"
+				@input="clearError"
+			/>
 			<div class="buttonsAddTask">
 				<button
+					type="submit"
 					class="addTask"
-					@click="checkInputOnError"
 				>
 					Добавить задачу
 				</button>
 				<button
+					type="button"
 					class="cancelTask"
 					@click="close"
 				>
 					Отмена
 				</button>
 			</div>
-		</div>
+		</form>
 	</div>
 </template>
 

@@ -13,10 +13,10 @@ export default {
 	},
 	props: {
 		id: {
-			type: Number,
+			type: String,
 			required: true
 		},
-		seltitle: {
+		selectTask: {
 			type: String,
 			required: true
 		}
@@ -25,7 +25,7 @@ export default {
 
 	data() {
 		return {
-			newTitle: this.seltitle,
+			newTask: this.selectTask,
 			error: false
 		}
 	},
@@ -34,25 +34,29 @@ export default {
 	},
 	mounted() {
 		this.dataStore.fetchData()
-		document.addEventListener('keyup', event => {
+
+		document.addEventListener('keyup', this.onKeyUp)
+	},
+	unmounted() {
+		document.removeEventListener('keyup', this.onKeyUp)
+	},
+	methods: {
+		onKeyUp(event) {
 			if (event.key === 'Escape') {
 				this.close()
 			}
-		})
-	},
-	methods: {
+		},
 		close() {
 			this.$emit('close')
 		},
 
 		checkInputOnError(value) {
 			if (value.trim() === '') {
-				this.error = true
-			} else {
-				this.error = false
-				this.dataStore.updateTitle(this.id, value)
-				this.close()
+				return (this.error = true)
 			}
+			this.error = false
+			this.dataStore.updateTask(this.id, value)
+			this.close()
 		},
 		clearError() {
 			this.error = false
@@ -63,35 +67,34 @@ export default {
 
 <template>
 	<div v-click-outside="close">
-		<div
+		<form
 			class="modalWindow"
-			@keyup.esc="close"
+			@submit.prevent="checkInputOnError(newTask)"
 		>
-			<div class="divButtonClose">
-				<button
-					class="buttonClose"
-					@click="close"
-				>
-					<closeWindowIcon />
-				</button>
-			</div>
-			<div>
-				<input
-					v-model="newTitle"
-					:maxlength="20"
-					class="EditInput"
-					:class="{ 'error-message': error }"
-					type="text"
-					placeholder="Новое название папки"
-					@input="clearError"
-					@keyup.enter="checkInputOnError(newTitle)"
-				/>
-			</div>
+			<button
+				type="button"
+				class="buttonClose"
+				@click="close"
+			>
+				<closeWindowIcon />
+			</button>
+			<input
+				v-model="newTask"
+				:maxlength="100"
+				class="EditInput"
+				:class="{ 'error-message': error }"
+				type="text"
+				placeholder="Новое название задачи"
+				@input="clearError"
+			/>
 
-			<div class="buttonEditTitle">
-				<button @click="checkInputOnError(newTitle)">Изменить</button>
-			</div>
-		</div>
+			<button
+				class="buttonEditfolder"
+				type="submit"
+			>
+				Изменить
+			</button>
+		</form>
 	</div>
 </template>
 
@@ -99,7 +102,7 @@ export default {
 .modalWindow {
 	position: absolute;
 	background-color: #f4f6f8;
-	height: 130px;
+	height: 110px;
 	width: 235px;
 	border-radius: 10px;
 	margin-top: 10px;
@@ -142,11 +145,8 @@ export default {
 .buttonClose svg:hover {
 	fill: black;
 }
-.buttonEditTitle {
-	border-top: 13px;
-	text-align: center;
-}
-.buttonEditTitle button {
+
+.buttonEditfolder {
 	background-color: #4dd599;
 	color: #fff;
 	width: 200px;
@@ -155,11 +155,12 @@ export default {
 	border: 0;
 	cursor: pointer;
 	margin-top: 10px;
+	margin-left: 17px;
 }
-.buttonEditTitle button:active {
+.buttonEditfolder:active {
 	background-color: #256e4e;
 }
-.buttonEditTitle button:hover {
+.buttonEditfolder:hover {
 	background-color: #42bb87;
 }
 </style>

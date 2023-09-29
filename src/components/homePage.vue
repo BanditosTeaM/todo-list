@@ -8,8 +8,10 @@ export default {
 	},
 	methods: {
 		checkVisibleTask(id) {
-			const visibleTask = this.dataStore.task.find(vTask => vTask.taskId === id)
-			return visibleTask ? visibleTask.taskId : ''
+			const visibleTask = this.dataStore.tasks.find(
+				vTask => vTask.folderID === id
+			)
+			return visibleTask ? visibleTask.folderID : ''
 		}
 	}
 }
@@ -17,36 +19,36 @@ export default {
 <template>
 	<div>
 		<div
-			v-for="title in dataStore.getTitlesWithTasks"
-			:key="title.id"
+			v-for="folder in dataStore.getFoldersWithTasks"
+			:key="folder.id"
 			class="taskList"
 		>
 			<h2
-				class="title"
-				:style="{ color: title.color }"
+				class="folder"
+				:style="{ color: folder.color }"
 			>
-				{{ title.title }}
+				{{ folder.name }}
 			</h2>
 
 			<hr />
-			<div v-if="checkVisibleTask(title.id)">
+			<div v-if="checkVisibleTask(folder._id)">
 				<div
-					v-for="task in title.tasks"
-					:key="task.id"
+					v-for="task in folder.tasks"
+					:key="task._id"
 					class="taskPage"
 				>
 					<label>
 						<input
 							class="checkInput"
 							type="checkbox"
-							:checked="task.doneTask"
-							@change="dataStore.updateDoneTask(task.id)"
+							:checked="task.done"
+							@change="dataStore.updateDoneTask(task._id)"
 						/>
 						<span
 							class="checkBox"
-							@change="dataStore.updateDoneTask(task.id)"
+							@change="dataStore.updateDoneTask(task._id)"
 						></span>
-						{{ task.task }}
+						{{ task.text }}
 					</label>
 				</div>
 			</div>
@@ -92,7 +94,7 @@ export default {
 .checkInput:focus + .checkBox {
 	box-shadow: 0 0 0 1px black;
 }
-.title {
+.folder {
 	font-family: 'Montserrat', sans-serif;
 	font-size: 32px;
 	font-style: normal;

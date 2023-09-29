@@ -1,36 +1,39 @@
 import { defineStore } from 'pinia'
-import { getDatabaseData } from './api/getDatabaseOld'
-import storageTitle from './storage/adapters/title'
+import storageFolder from './storage/adapters/folder'
 import storageTask from './storage/adapters/task'
 
 export const useDataStore = defineStore('data', {
 	state: () => ({
-		data: [],
-		title: [],
-		task: []
+		folders: [],
+		tasks: []
 	}),
 
 	getters: {
-		getTitleById: state => id => {
-			const title = state.title.find(title => title.id === id)
-			if (!title) {
+		getFolderById: state => id => {
+			if (!state.folders && !Array.isArray(state.folders)) {
+				return null
+			}
+			const folder = state.folders.find(folder => folder._id === id)
+			if (!folder) {
 				return null
 			}
 
-			const tasks = state.task.filter(task => task.taskId === id)
+			const tasks = state.tasks.filter(task => task.folderID === id)
 
 			return {
-				...title,
+				...folder,
 				tasks
 			}
 		},
 
-		getTitlesWithTasks: state => {
-			return state.title.map(title => {
-				const tasks = state.task.filter(task => task.taskId === title.id)
-
+		getFoldersWithTasks: state => {
+			if (!state.folders && !Array.isArray(state.folders)) {
+				return []
+			}
+			return state.folders.map(folder => {
+				const tasks = state.tasks.filter(task => task.folderID === folder._id)
 				return {
-					...title,
+					...folder,
 					tasks
 				}
 			})
@@ -40,80 +43,158 @@ export const useDataStore = defineStore('data', {
 	actions: {
 		async fetchData() {
 			try {
-				this.data = await getDatabaseData()
-
-				if (this.title.length === 0) {
-					this.title = this.data.titleTask
+				if (this.folders.length === 0) {
+					this.folders = await fetch('http://localhost:3001/folder/').then(
+						response => response.json()
+					)
 				}
 
-				if (this.task.length === 0) {
-					this.task = this.data.infoTask
+				if (this.tasks.length === 0) {
+					this.tasks = await fetch('http://localhost:3001/task/').then(
+						response => response.json()
+					)
 				}
-
-				this.color = this.data.titleColor
 			} catch (error) {
-				if (error.response.status === 500) {
+				if (error.response && error.response.status === 500) {
 					console.error('Ошибка при загрузке данных с сервера:', error.message)
 				} else {
 					console.error('Другая ошибка:', error)
 				}
 			}
 		},
-		initializeTitle() {
-			const jsonTitles = JSON.parse(storageTitle.getTitleInStorage())
-			if (!jsonTitles) return
-			this.title = jsonTitles
+		initializeFolder() {
+			const jsonfolders = JSON.parse(storageFolder.getFolderInStorage())
+			if (!jsonfolders) return
+			this.folders = jsonfolders
 		},
 
 		initializeTask() {
 			const jsonTasks = JSON.parse(storageTask.getTaskInStorage())
 			if (!jsonTasks) return
 
-			this.task = jsonTasks
+			this.tasks = jsonTasks
 		},
 
 		deleteFolder(id) {
-			this.title = this.title.filter(title => title.id !== id)
-			storageTitle.setTitleInStorage(this.title)
+			fetch(`http://localhost:3001/folder/${id}`, {
+				method: 'DELETE'
+			})
+			this.folders = this.folders.filter(folder => folder._id !== id)
+			storageFolder.setFolderInStorage(this.folders)
 		},
 
 		deleteTask(id) {
-			this.task = this.task.filter(task => task.id !== id)
-			storageTask.setTaskInStorage(this.task)
+			fetch(`http://localhost:3001/task/${id}`, {
+				method: 'DELETE'
+			})
+			this.task = this.tasks.filter(task => task._id !== id)
+			storageTask.setTaskInStorage(this.tasks)
 		},
 
-		addTitle(inputValue, color) {
-			const maxId = Math.max(0, ...this.title.map(title => title.id))
+		addFolder(inputValue, color) {
+			const addFolder = {
+				name: inputValue,
+				color: color
+			}
 
-			this.title.push({
-				id: maxId + 1,
-				color: color,
-				title: inputValue
+			fetch('http://localhost:3001/folder/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(addFolder)
 			})
-			storageTitle.setTitleInStorage(this.title)
+				.then(response => response.json())
+				.then(data => {
+					this.folders.push({
+						_id: data._id,
+						color: data.color,
+						name: data.name
+					})
+					storageFolder.setFolderInStorage(this.folders)
+				})
 		},
 
 		addTask(inputValue, taskId) {
-			const maxId = Math.max(0, ...this.task.map(task => task.id))
+			const addTask = {
+				folderID: taskId,
+				text: inputValue
+			}
 
-			this.task.push({
-				id: maxId + 1,
-				taskId: taskId,
-				task: inputValue,
-				doneTask: false
+			fetch('http://localhost:3001/task/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(addTask)
 			})
-			storageTask.setTaskInStorage(this.task)
+				.then(response => response.json())
+				.then(data => {
+					this.tasks.push({
+						_id: data._id,
+						folderID: data.folderID,
+						text: data.text,
+						done: data.done
+					})
+					storageTask.setTaskInStorage(this.tasks)
+				})
 		},
 
-		updateTitle(id, newTitle) {
-			const oldTitle = this.title.find(oldTitle => oldTitle.id === id)
-			oldTitle.title = newTitle
-			storageTitle.setTitleInStorage(this.title)
+		updateFolder(id, newFolder, newColor) {
+			const oldFolder = this.folders.find(oldFolder => oldFolder._id === id)
+			oldFolder.name = newFolder
+			oldFolder.color = newColor
+
+			const putFolder = {
+				name: oldFolder.name,
+				color: oldFolder.color
+			}
+
+			fetch(`http://localhost:3001/folder/${id}`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(putFolder)
+			}).then(response => response.json())
+
+			storageFolder.setFolderInStorage(this.folders)
 		},
+
+		updateTask(id, newTask) {
+			const oldTask = this.tasks.find(oldTask => oldTask._id === id)
+			oldTask.text = newTask
+			const putTask = {
+				text: oldTask.text
+			}
+
+			fetch(`http://localhost:3001/task/${id}`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(putTask)
+			}).then(response => response.json())
+			storageTask.setTaskInStorage(this.tasks)
+		},
+
 		updateDoneTask(id) {
-			const task = this.task.find(task => task.id === id)
-			task.doneTask = !task.doneTask
-			storageTask.setTaskInStorage(this.task)
+			const task = this.tasks.find(task => task._id === id)
+			task.done = !task.done
+
+			const putTask = {
+				done: task.done
+			}
+
+			fetch(`http://localhost:3001/task/${id}`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(putTask)
+			}).then(response => response.json())
+
+			storageTask.setTaskInStorage(this.tasks)
 		}
 	}
 })

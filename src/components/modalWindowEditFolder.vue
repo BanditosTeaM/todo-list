@@ -12,12 +12,22 @@ export default {
 	directives: {
 		clickOutside: vClickOutside.directive
 	},
+	props: {
+		id: {
+			type: String,
+			required: true
+		},
+		selectFolder: {
+			type: String,
+			required: true
+		}
+	},
 	emits: ['close'],
 
 	data() {
 		return {
+			newFolder: this.selectFolder,
 			colors: [],
-			inputValue: '',
 			colorFolder: '',
 			defaultColor: '#000',
 			error: false
@@ -30,11 +40,8 @@ export default {
 		this.dataStore.fetchData()
 
 		this.colors = colors
+
 		this.defaultColor = colors[0]
-
-		this.popupItem = this.$el
-
-		this.$el.focus()
 
 		document.addEventListener('keyup', this.onKeyUp)
 	},
@@ -47,23 +54,26 @@ export default {
 				this.close()
 			}
 		},
+
 		close() {
 			this.$emit('close')
 		},
-		getColor(color) {
-			this.defaultColor = color
-		},
-		handlPrevent() {
-			if (this.inputValue.trim() === '') {
+
+		handlPrevent(value) {
+			if (value.trim() === '') {
 				return (this.error = true)
 			}
 			this.error = false
-			this.dataStore.addFolder(this.inputValue, this.defaultColor)
-
+			this.dataStore.updateFolder(this.id, value, this.defaultColor)
 			this.close()
 		},
+
 		clearError() {
 			this.error = false
+		},
+
+		getColor(color) {
+			this.defaultColor = color
 		}
 	}
 }
@@ -73,7 +83,7 @@ export default {
 	<div v-click-outside="close">
 		<form
 			class="modalWindow"
-			@submit.prevent="handlPrevent"
+			@submit.prevent="handlPrevent(newFolder)"
 		>
 			<button
 				type="button"
@@ -83,19 +93,19 @@ export default {
 				<closeWindowIcon />
 			</button>
 			<input
-				v-model="inputValue"
-				:maxlength="17"
-				class="InputFolder"
-				type="text"
-				placeholder="Название папки"
+				v-model="newFolder"
+				:maxlength="20"
+				class="EditInput"
 				:class="{ 'error-message': error }"
+				type="text"
+				placeholder="Новое название папки"
 				@input="clearError"
 			/>
-			<div>
+			<div class="circle-div">
 				<label
 					v-for="color in colors"
 					:key="color"
-					class="circle-div"
+					class="circle-label"
 				>
 					<input
 						v-model="defaultColor"
@@ -112,25 +122,24 @@ export default {
 				</label>
 			</div>
 			<button
-				class="buttonAddFolder"
+				class="buttonEditfolder"
 				type="submit"
 			>
-				Добавить
+				Изменить
 			</button>
 		</form>
 	</div>
 </template>
 
 <style scoped>
-.circle-div:first-child {
+.circle-label:first-child {
 	padding-left: 13px;
 }
-.circle-div:first-child .circle-input:checked + .circle-span {
+.circle-label:first-child .circle-input:checked + .circle-span {
 	box-shadow: 0 0 0 2px #525252;
 }
-.circle-div {
+.circle-label {
 	display: inline-block;
-	margin-top: 13px;
 }
 
 .circle-input {
@@ -138,6 +147,7 @@ export default {
 	-webkit-appearance: none;
 	appearance: none;
 }
+
 .circle-span {
 	display: inline-block;
 	height: 20px;
@@ -146,35 +156,42 @@ export default {
 	cursor: pointer;
 	margin-left: 5px;
 }
+.circle-div {
+	margin-top: 7px;
+}
+.circle-span:first-child {
+	margin-left: 17px;
+}
 .circle-input:checked + .circle-span {
 	box-shadow: 0 0 0 2px #525252;
 }
 .modalWindow {
-	position: relative;
-	background-color: #ffffff;
-	height: 160px;
+	position: absolute;
+	background-color: #f4f6f8;
+	height: 130px;
 	width: 235px;
 	border-radius: 10px;
-	margin-top: 25px;
-	margin-left: 30px;
+	margin-top: 10px;
+	margin-left: 40px;
 }
-.InputFolder {
+.EditInput {
 	width: 200px;
 	height: 32px;
 	flex-shrink: 0;
 	border-radius: 4px;
 	border: 1px solid #efefef;
 	box-sizing: border-box;
-	margin-top: 15px;
-	margin-left: 15px;
+	margin-left: 17px;
 	padding-left: 15px;
+	margin-top: 20px;
 	outline: none;
 }
-.InputFolder:hover {
-	border: 2px solid black;
+.EditInput:hover {
 	border-radius: 4px;
-	margin-left: 14px;
+	border: 2px solid black;
+	margin-left: 16px;
 }
+
 .error-message {
 	border: 1px solid red;
 }
@@ -185,7 +202,6 @@ export default {
 	left: 0;
 	display: block;
 	width: 30px;
-	height: 32px;
 	outline: none;
 	border: 0;
 	background: transparent;
@@ -196,21 +212,21 @@ export default {
 	fill: black;
 }
 
-.buttonAddFolder {
-	color: #fff;
+.buttonEditfolder {
 	background-color: #4dd599;
+	color: #fff;
 	width: 200px;
-	height: 37px;
+	height: 33px;
 	border-radius: 4px;
 	border: 0;
 	cursor: pointer;
-	margin-top: 10px;
+	margin-top: 8px;
 	margin-left: 17px;
 }
-.buttonAddFolder:active {
+.buttonEditfolder:active {
 	background-color: #256e4e;
 }
-.buttonAddFolder:hover {
+.buttonEditfolder:hover {
 	background-color: #42bb87;
 }
 </style>

@@ -30,10 +30,7 @@ export default {
 	},
 
 	mounted() {
-		fetch('http://localhost:3001/')
-			.then(response => response.json())
-			.then(data => console.log(data))
-		this.dataStore.initializeTitle()
+		this.dataStore.initializeFolder()
 		this.dataStore.initializeTask()
 		this.dataStore.fetchData()
 	},
@@ -42,7 +39,7 @@ export default {
 		onDeleteFolder(id) {
 			const paramId = this.$route?.params?.id
 
-			if (paramId && id === Number(paramId)) {
+			if (paramId && id === paramId) {
 				this.$router.push('/')
 			}
 
@@ -91,22 +88,22 @@ export default {
 			<nav class="menuNav">
 				<ul>
 					<li
-						v-for="title in dataStore.getTitlesWithTasks"
-						:key="title.id"
+						v-for="folder in dataStore.getFoldersWithTasks"
+						:key="folder._id"
 						@click="closeMenu"
 					>
 						<router-link
-							:to="'/task-info/' + title.id"
-							class="titleTask"
+							:to="'/task-info/' + folder._id"
+							class="folderTask"
 						>
-							<div class="titleTaskInnerWrapper">
-								<dotCircle :color="title.color" />
-								{{ title.title }}
+							<div class="folderTaskInnerWrapper">
+								<dotCircle :color="folder.color" />
+								{{ folder.name }}
 							</div>
 						</router-link>
 						<button
-							class="deleteTitle"
-							@click="onDeleteFolder(title.id)"
+							class="deletefolder"
+							@click="onDeleteFolder(folder._id)"
 						>
 							<deleteFolderIcon />
 						</button>
@@ -145,7 +142,7 @@ export default {
 	box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.05);
 }
 
-.deleteTitle {
+.deletefolder {
 	opacity: 0;
 	background: transparent;
 	border: 0;
@@ -155,7 +152,7 @@ export default {
 	margin-left: 190px;
 }
 
-.titleTask {
+.folderTask {
 	padding: 5px 10px;
 	margin-bottom: 10px;
 	display: flex;
@@ -164,7 +161,7 @@ export default {
 	width: 200px;
 	height: 35px;
 }
-.titleTaskInnerWrapper {
+.folderTaskInnerWrapper {
 	display: flex;
 	align-items: center;
 	column-gap: 10px;
@@ -177,19 +174,19 @@ export default {
 	line-height: normal;
 	letter-spacing: 0.15px;
 }
-li:hover .deleteTitle {
+li:hover .deletefolder {
 	opacity: 1;
 }
-.titleTask.router-link-active + .deleteTitle {
+.folderTask.router-link-active + .deletefolder {
 	opacity: 1;
 }
-li:hover .titleTask {
+li:hover .folderTask {
 	border-radius: 4px;
 	background: #f8f6f4;
 	box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.05);
 }
 
-li .titleTask.router-link-active {
+li .folderTask.router-link-active {
 	width: 200px;
 	height: 37px;
 	flex-shrink: 0;
