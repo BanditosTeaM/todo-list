@@ -29,7 +29,7 @@ export default {
 		return {
 			isModalWindowTaskOpen: false,
 			isModalWindowEditFolderOpen: false,
-			isModalWindowEditTask: false,
+			isModalWindowEditTask: '',
 			selectedTask: '',
 			taskID: '',
 			selectedFolder: ''
@@ -43,10 +43,10 @@ export default {
 		},
 
 		checkVisibleTask() {
-			const visibleTask = this.dataStore.task.find(
-				vTask => vTask.taskId === this.numberedTaskId
+			const visibleTask = this.dataStore.tasks.find(
+				vTask => vTask.folderID === this.numberedTaskId
 			)
-			return visibleTask ? visibleTask.taskId : ''
+			return visibleTask ? visibleTask.folderID : ''
 		},
 		getObjectById() {
 			return this.dataStore.getFolderById(this.numberedTaskId)
@@ -60,7 +60,7 @@ export default {
 		getTask(task, id) {
 			this.selectedTask = task
 			this.taskID = id
-			this.isModalWindowEditTask = true
+			this.isModalWindowEditTask = id
 		},
 		close() {
 			this.$emit('close')
@@ -123,13 +123,13 @@ export default {
 						<deleteTaskIcon />
 					</button>
 				</label>
+				<modalWindowEditTask
+					v-if="isModalWindowEditTask == task._id"
+					:id="taskID"
+					:select-task="selectedTask"
+					@close="isModalWindowEditTask = ''"
+				/>
 			</div>
-			<modalWindowEditTask
-				v-if="isModalWindowEditTask"
-				:id="taskID"
-				:select-task="selectedTask"
-				@close="isModalWindowEditTask = false"
-			/>
 		</div>
 		<div v-else>
 			<div class="taskPart">Мой голубчик, задач нету</div>

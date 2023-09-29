@@ -43,35 +43,35 @@ export default {
 
 		this.defaultColor = colors[0]
 
-		document.addEventListener('keyup', event => {
-			if (event.key === 'Escape') {
-				this.close()
-			}
-		})
+		document.addEventListener('keyup', this.onKeyUp)
 	},
 	unmounted() {
-		document.addEventListener('keyup', event => {
+		document.removeEventListener('keyup', this.onKeyUp)
+	},
+	methods: {
+		onKeyUp(event) {
 			if (event.key === 'Escape') {
 				this.close()
 			}
-		})
-	},
-	methods: {
+		},
+
 		close() {
 			this.$emit('close')
 		},
 
-		checkInputOnError(value) {
+		handlPrevent(value) {
 			if (value.trim() === '') {
-				this.error = true
+				return (this.error = true)
 			}
 			this.error = false
 			this.dataStore.updateFolder(this.id, value, this.defaultColor)
 			this.close()
 		},
+
 		clearError() {
 			this.error = false
 		},
+
 		getColor(color) {
 			this.defaultColor = color
 		}
@@ -81,35 +81,31 @@ export default {
 
 <template>
 	<div v-click-outside="close">
-		<div
+		<form
 			class="modalWindow"
-			@keyup.esc="close"
+			@submit.prevent="handlPrevent(newFolder)"
 		>
-			<div class="divButtonClose">
-				<button
-					class="buttonClose"
-					@click="close"
-				>
-					<closeWindowIcon />
-				</button>
-			</div>
-			<div>
-				<input
-					v-model="newFolder"
-					:maxlength="20"
-					class="EditInput"
-					:class="{ 'error-message': error }"
-					type="text"
-					placeholder="Новое название папки"
-					@input="clearError"
-					@keyup.enter="checkInputOnError(newFolder)"
-				/>
-			</div>
-			<div>
+			<button
+				type="button"
+				class="buttonClose"
+				@click="close"
+			>
+				<closeWindowIcon />
+			</button>
+			<input
+				v-model="newFolder"
+				:maxlength="20"
+				class="EditInput"
+				:class="{ 'error-message': error }"
+				type="text"
+				placeholder="Новое название папки"
+				@input="clearError"
+			/>
+			<div class="circle-div">
 				<label
 					v-for="color in colors"
 					:key="color"
-					class="circle-div"
+					class="circle-label"
 				>
 					<input
 						v-model="defaultColor"
@@ -125,23 +121,25 @@ export default {
 					></span>
 				</label>
 			</div>
-			<div class="buttonEditfolder">
-				<button @click="checkInputOnError(newFolder)">Изменить</button>
-			</div>
-		</div>
+			<button
+				class="buttonEditfolder"
+				type="submit"
+			>
+				Изменить
+			</button>
+		</form>
 	</div>
 </template>
 
 <style scoped>
-.circle-div:first-child {
+.circle-label:first-child {
 	padding-left: 13px;
 }
-.circle-div:first-child .circle-input:checked + .circle-span {
+.circle-label:first-child .circle-input:checked + .circle-span {
 	box-shadow: 0 0 0 2px #525252;
 }
-.circle-div {
+.circle-label {
 	display: inline-block;
-	margin-top: 13px;
 }
 
 .circle-input {
@@ -149,6 +147,7 @@ export default {
 	-webkit-appearance: none;
 	appearance: none;
 }
+
 .circle-span {
 	display: inline-block;
 	height: 20px;
@@ -156,6 +155,12 @@ export default {
 	border-radius: 20px;
 	cursor: pointer;
 	margin-left: 5px;
+}
+.circle-div {
+	margin-top: 7px;
+}
+.circle-span:first-child {
+	margin-left: 17px;
 }
 .circle-input:checked + .circle-span {
 	box-shadow: 0 0 0 2px #525252;
@@ -206,11 +211,8 @@ export default {
 .buttonClose svg:hover {
 	fill: black;
 }
+
 .buttonEditfolder {
-	border-top: 13px;
-	text-align: center;
-}
-.buttonEditfolder button {
 	background-color: #4dd599;
 	color: #fff;
 	width: 200px;
@@ -218,12 +220,13 @@ export default {
 	border-radius: 4px;
 	border: 0;
 	cursor: pointer;
-	margin-top: 10px;
+	margin-top: 8px;
+	margin-left: 17px;
 }
-.buttonEditfolder button:active {
+.buttonEditfolder:active {
 	background-color: #256e4e;
 }
-.buttonEditfolder button:hover {
+.buttonEditfolder:hover {
 	background-color: #42bb87;
 }
 </style>

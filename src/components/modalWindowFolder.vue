@@ -36,29 +36,26 @@ export default {
 
 		this.$el.focus()
 
-		document.addEventListener('keyup', event => {
-			if (event.key === 'Escape') {
-				this.close()
-			}
-		})
+		document.addEventListener('keyup', this.onKeyUp)
 	},
 	unmounted() {
-		document.addEventListener('keyup', event => {
+		document.removeEventListener('keyup', this.onKeyUp)
+	},
+	methods: {
+		onKeyUp(event) {
 			if (event.key === 'Escape') {
 				this.close()
 			}
-		})
-	},
-	methods: {
+		},
 		close() {
 			this.$emit('close')
 		},
 		getColor(color) {
 			this.defaultColor = color
 		},
-		checkInputOnError() {
+		handlPrevent() {
 			if (this.inputValue.trim() === '') {
-				this.error = true
+				return (this.error = true)
 			}
 			this.error = false
 			this.dataStore.addFolder(this.inputValue, this.defaultColor)
@@ -74,27 +71,26 @@ export default {
 
 <template>
 	<div v-click-outside="close">
-		<div class="modalWindow">
-			<div class="divButtonClose">
-				<button
-					class="buttonClose"
-					@click="close"
-				>
-					<closeWindowIcon />
-				</button>
-			</div>
-			<div>
-				<input
-					v-model="inputValue"
-					:maxlength="17"
-					class="InputFolder"
-					type="text"
-					placeholder="Название папки"
-					:class="{ 'error-message': error }"
-					@input="clearError"
-					@keyup.enter="checkInputOnError"
-				/>
-			</div>
+		<form
+			class="modalWindow"
+			@submit.prevent="handlPrevent"
+		>
+			<button
+				type="button"
+				class="buttonClose"
+				@click="close"
+			>
+				<closeWindowIcon />
+			</button>
+			<input
+				v-model="inputValue"
+				:maxlength="17"
+				class="InputFolder"
+				type="text"
+				placeholder="Название папки"
+				:class="{ 'error-message': error }"
+				@input="clearError"
+			/>
 			<div>
 				<label
 					v-for="color in colors"
@@ -115,10 +111,13 @@ export default {
 					></span>
 				</label>
 			</div>
-			<div class="buttonAddFolder">
-				<button @click="checkInputOnError">Добавить</button>
-			</div>
-		</div>
+			<button
+				class="buttonAddFolder"
+				type="submit"
+			>
+				Добавить
+			</button>
+		</form>
 	</div>
 </template>
 
@@ -196,11 +195,8 @@ export default {
 .buttonClose svg:hover {
 	fill: black;
 }
+
 .buttonAddFolder {
-	border-top: 13px;
-	text-align: center;
-}
-.buttonAddFolder button {
 	color: #fff;
 	background-color: #4dd599;
 	width: 200px;
@@ -209,11 +205,12 @@ export default {
 	border: 0;
 	cursor: pointer;
 	margin-top: 10px;
+	margin-left: 17px;
 }
-.buttonAddFolder button:active {
+.buttonAddFolder:active {
 	background-color: #256e4e;
 }
-.buttonAddFolder button:hover {
+.buttonAddFolder:hover {
 	background-color: #42bb87;
 }
 </style>

@@ -35,34 +35,24 @@ export default {
 	mounted() {
 		this.dataStore.fetchData()
 
-		document.addEventListener('keyup', event => {
-			if (event.key === 'Escape') {
-				this.close()
-			}
-		})
+		document.addEventListener('keyup', this.onKeyUp)
 	},
 	unmounted() {
-		document.addEventListener('keyup', event => {
+		document.removeEventListener('keyup', this.onKeyUp)
+	},
+	methods: {
+		onKeyUp(event) {
 			if (event.key === 'Escape') {
 				this.close()
 			}
-		})
-	},
-	methods: {
+		},
 		close() {
 			this.$emit('close')
 		},
-		handleKeyUp(event) {
-			if (event.key === 'Escape') {
-				this.close()
-			} else if (event.key === 'Enter') {
-				event.preventDefault()
-				this.checkInputOnError(this.newTask)
-			}
-		},
+
 		checkInputOnError(value) {
 			if (value.trim() === '') {
-				this.error = true
+				return (this.error = true)
 			}
 			this.error = false
 			this.dataStore.updateTask(this.id, value)
@@ -78,34 +68,32 @@ export default {
 <template>
 	<div v-click-outside="close">
 		<form
-			method="POST"
-			@keyup="handleKeyUp"
+			class="modalWindow"
+			@submit.prevent="checkInputOnError(newTask)"
 		>
-			<div class="modalWindow">
-				<div class="divButtonClose">
-					<button
-						class="buttonClose"
-						@click="close"
-					>
-						<closeWindowIcon />
-					</button>
-				</div>
-				<div>
-					<input
-						v-model="newTask"
-						:maxlength="100"
-						class="EditInput"
-						:class="{ 'error-message': error }"
-						type="text"
-						placeholder="Новое название задачи"
-						@input="clearError"
-					/>
-				</div>
+			<button
+				type="button"
+				class="buttonClose"
+				@click="close"
+			>
+				<closeWindowIcon />
+			</button>
+			<input
+				v-model="newTask"
+				:maxlength="100"
+				class="EditInput"
+				:class="{ 'error-message': error }"
+				type="text"
+				placeholder="Новое название задачи"
+				@input="clearError"
+			/>
 
-				<div class="buttonEditfolder">
-					<button @click="checkInputOnError(newTask)">Изменить</button>
-				</div>
-			</div>
+			<button
+				class="buttonEditfolder"
+				type="submit"
+			>
+				Изменить
+			</button>
 		</form>
 	</div>
 </template>
@@ -114,7 +102,7 @@ export default {
 .modalWindow {
 	position: absolute;
 	background-color: #f4f6f8;
-	height: 130px;
+	height: 110px;
 	width: 235px;
 	border-radius: 10px;
 	margin-top: 10px;
@@ -157,11 +145,8 @@ export default {
 .buttonClose svg:hover {
 	fill: black;
 }
+
 .buttonEditfolder {
-	border-top: 13px;
-	text-align: center;
-}
-.buttonEditfolder button {
 	background-color: #4dd599;
 	color: #fff;
 	width: 200px;
@@ -170,11 +155,12 @@ export default {
 	border: 0;
 	cursor: pointer;
 	margin-top: 10px;
+	margin-left: 17px;
 }
-.buttonEditfolder button:active {
+.buttonEditfolder:active {
 	background-color: #256e4e;
 }
-.buttonEditfolder button:hover {
+.buttonEditfolder:hover {
 	background-color: #42bb87;
 }
 </style>
