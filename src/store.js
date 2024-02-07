@@ -45,13 +45,13 @@ export const useDataStore = defineStore('data', {
 			try {
 				if (this.folders.length === 0) {
 					this.folders = await fetch(
-						'https://todo-api-kappa-ashen.vercel.app/folder/'
+						'https://todo-api-cyan.vercel.app/folder/'
 					).then(response => response.json())
 				}
 
 				if (this.tasks.length === 0) {
 					this.tasks = await fetch(
-						'https://todo-api-kappa-ashen.vercel.app/task/'
+						'https://todo-api-cyan.vercel.app/task/'
 					).then(response => response.json())
 				}
 			} catch (error) {
@@ -76,7 +76,7 @@ export const useDataStore = defineStore('data', {
 		},
 
 		deleteFolder(id) {
-			fetch(`https://todo-api-kappa-ashen.vercel.app/folder/${id}`, {
+			fetch(`https://todo-api-cyan.vercel.app/folder/${id}`, {
 				method: 'DELETE'
 			})
 			this.folders = this.folders.filter(folder => folder._id !== id)
@@ -84,7 +84,7 @@ export const useDataStore = defineStore('data', {
 		},
 
 		deleteTask(id) {
-			fetch(`https://todo-api-kappa-ashen.vercel.app/task/${id}`, {
+			fetch(`https://todo-api-cyan.vercel.app/task/${id}`, {
 				method: 'DELETE'
 			})
 			this.task = this.tasks.filter(task => task._id !== id)
@@ -97,7 +97,7 @@ export const useDataStore = defineStore('data', {
 				color: color
 			}
 
-			fetch('https://todo-api-kappa-ashen.vercel.app/folder/', {
+			fetch('https://todo-api-cyan.vercel.app/folder/', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -121,7 +121,7 @@ export const useDataStore = defineStore('data', {
 				text: inputValue
 			}
 
-			fetch('https://todo-api-kappa-ashen.vercel.app/task/', {
+			fetch('https://todo-api-cyan.vercel.app/task/', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -150,7 +150,7 @@ export const useDataStore = defineStore('data', {
 				color: oldFolder.color
 			}
 
-			fetch(`https://todo-api-kappa-ashen.vercel.app/folder/${id}`, {
+			fetch(`https://todo-api-cyan.vercel.app/folder/${id}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
@@ -168,7 +168,7 @@ export const useDataStore = defineStore('data', {
 				text: oldTask.text
 			}
 
-			fetch(`https://todo-api-kappa-ashen.vercel.app/task/${id}`, {
+			fetch(`https://todo-api-cyan.vercel.app/task/${id}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
@@ -186,7 +186,7 @@ export const useDataStore = defineStore('data', {
 				done: task.done
 			}
 
-			fetch(`https://todo-api-kappa-ashen.vercel.app/task/${id}`, {
+			fetch(`https://todo-api-cyan.vercel.app/task/${id}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
