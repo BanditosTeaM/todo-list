@@ -44,15 +44,15 @@ export const useDataStore = defineStore('data', {
 		async fetchData() {
 			try {
 				if (this.folders.length === 0) {
-					this.folders = await fetch('http://localhost:3001/folder/').then(
-						response => response.json()
-					)
+					this.folders = await fetch(
+						'https://todo-api-kappa-ashen.vercel.app/folder/'
+					).then(response => response.json())
 				}
 
 				if (this.tasks.length === 0) {
-					this.tasks = await fetch('http://localhost:3001/task/').then(
-						response => response.json()
-					)
+					this.tasks = await fetch(
+						'https://todo-api-kappa-ashen.vercel.app/task/'
+					).then(response => response.json())
 				}
 			} catch (error) {
 				if (error.response && error.response.status === 500) {
@@ -76,7 +76,7 @@ export const useDataStore = defineStore('data', {
 		},
 
 		deleteFolder(id) {
-			fetch(`http://localhost:3001/folder/${id}`, {
+			fetch(`https://todo-api-kappa-ashen.vercel.app/folder/${id}`, {
 				method: 'DELETE'
 			})
 			this.folders = this.folders.filter(folder => folder._id !== id)
@@ -84,7 +84,7 @@ export const useDataStore = defineStore('data', {
 		},
 
 		deleteTask(id) {
-			fetch(`http://localhost:3001/task/${id}`, {
+			fetch(`https://todo-api-kappa-ashen.vercel.app/task/${id}`, {
 				method: 'DELETE'
 			})
 			this.task = this.tasks.filter(task => task._id !== id)
@@ -97,7 +97,7 @@ export const useDataStore = defineStore('data', {
 				color: color
 			}
 
-			fetch('http://localhost:3001/folder/', {
+			fetch('https://todo-api-kappa-ashen.vercel.app/folder/', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -121,7 +121,7 @@ export const useDataStore = defineStore('data', {
 				text: inputValue
 			}
 
-			fetch('http://localhost:3001/task/', {
+			fetch('https://todo-api-kappa-ashen.vercel.app/task/', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -150,7 +150,7 @@ export const useDataStore = defineStore('data', {
 				color: oldFolder.color
 			}
 
-			fetch(`http://localhost:3001/folder/${id}`, {
+			fetch(`https://todo-api-kappa-ashen.vercel.app/folder/${id}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
@@ -168,7 +168,7 @@ export const useDataStore = defineStore('data', {
 				text: oldTask.text
 			}
 
-			fetch(`http://localhost:3001/task/${id}`, {
+			fetch(`https://todo-api-kappa-ashen.vercel.app/task/${id}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
@@ -186,7 +186,7 @@ export const useDataStore = defineStore('data', {
 				done: task.done
 			}
 
-			fetch(`http://localhost:3001/task/${id}`, {
+			fetch(`https://todo-api-kappa-ashen.vercel.app/task/${id}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
